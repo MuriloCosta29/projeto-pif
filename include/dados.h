@@ -10,12 +10,8 @@
 // -------------------------------
 // Defensor *barreira aponta para o primeiro defensor da lista encadeada.
 // -------------------------------
-// struct Defensor *proximo liga um defensor ao próximo
+// struct `Defensor *proximo` liga um defensor ao próximo
 // -------------------------------
-// int
-// float
-// bool
-// char[50]
 
 #include <stdbool.h>
 
