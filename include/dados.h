@@ -34,7 +34,7 @@ typedef struct {
   bool esta_pulando;
 } Goleiro;
 
-typedef struct {
+typedef struct Defensor {
   float x;
   float y;
   float largura;
@@ -56,10 +56,18 @@ typedef struct {
   int tipo;
 } Medidor;
 
+typedef enum {
+  MENU = 0,
+  MIRANDO = 1,
+  CHUTANDO = 2,
+  RESULTADO = 3,
+  GAME_OVER = 4,
+} EstadoJogo;
+
 typedef struct {
-  int estado_atual;
   int pontuacao_atual;
   int chances_restantes;
+
   Bola bola;
   // Guarda os dados usados na bola na cobrança atual.
 
@@ -71,6 +79,8 @@ typedef struct {
 
   Medidor medidor_atual;
   // Guarda o medidor que está ativo no momento da cobrança.
+
+  EstadoJogo estado_atual;
 } Jogo;
 
 typedef struct {
