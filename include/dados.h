@@ -1,17 +1,5 @@
-// x vai de 0-800 ||| e y vai de 0-600 ||| como definido na em main.c
-// x -> Esquerda - Direita ||| y -> Cima - Baixo
-// stdbool.h
-
-// float para posição/movimento.
-// -------------------------------
-// int para pontuação, chances e tipo.
-// -------------------------------
-// bool para verdadeiro/falso.
-// -------------------------------
-// Defensor *barreira aponta para o primeiro defensor da lista encadeada.
-// -------------------------------
-// struct `Defensor *proximo` liga um defensor ao próximo
-// -------------------------------
+#ifndef DADOS_H
+#define DADOS_H
 
 #include <stdbool.h>
 
@@ -40,8 +28,7 @@ typedef struct Defensor {
   float largura;
   float altura;
   bool esta_pulando;
-  struct Defensor
-      *proximo; // Cada defensor guarda um ponteiro para o próximo defensor.
+  struct Defensor *proximo;
 } Defensor;
 
 typedef struct {
@@ -61,24 +48,23 @@ typedef enum {
   MIRANDO = 1,
   CHUTANDO = 2,
   RESULTADO = 3,
-  GAME_OVER = 4,
+  GAME_OVER = 4
 } EstadoJogo;
 
 typedef struct {
   int pontuacao_atual;
   int chances_restantes;
 
+  int etapa_chute;
+  float direcao_chute;
+  float altura_chute;
+  float curva_chute;
+  float forca_chute;
+
   Bola bola;
-  // Guarda os dados usados na bola na cobrança atual.
-
   Goleiro goleiro;
-  // Guarda os dados do goleiro, como posição, tamanho e movimento.
-
   Defensor *barreira;
-  // Ponteiro para o primeiro defensor da lista encadeada da barreira.
-
   Medidor medidor_atual;
-  // Guarda o medidor que está ativo no momento da cobrança.
 
   EstadoJogo estado_atual;
 } Jogo;
@@ -87,3 +73,5 @@ typedef struct {
   char nome[50];
   int pontuacao;
 } Score;
+
+#endif
