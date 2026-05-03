@@ -10,9 +10,3 @@ void inicializar_jogo(Jogo *jogo) {
   jogo->barreira = NULL;
   jogo->bola.em_movimento = false;
 }
-
-void atualizar_jogo(Jogo *jogo) {
-  if (jogo->estado_atual == MENU && IsKeyPressed(KEY_SPACE)) {
-    jogo->estado_atual = MIRANDO;
-  }
-}
