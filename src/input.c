@@ -26,9 +26,7 @@ void processarInput(Jogo *j) {
   atualizar_medidor(m);
 
   if (IsKeyPressed(KEY_SPACE)) {
-
     switch (j->etapa_chute) {
-
     case 0:
       j->direcao_chute = m->valor_atual;
       m->tipo = 1;
@@ -44,14 +42,18 @@ void processarInput(Jogo *j) {
       m->tipo = 3;
       break;
 
-    case 3: {
+    case 3:
       j->forca_chute = m->valor_atual;
-      chutar_bola(&j->bola, j->direcao_chute, j->altura_chute, j->curva_chute,
+
+      chutar_bola(&j->bola,
+                  j->direcao_chute,
+                  j->altura_chute,
+                  j->curva_chute,
                   j->forca_chute);
+
       j->estado_atual = CHUTANDO;
       m->ativo = false;
       break;
-    }
     }
 
     j->etapa_chute++;
