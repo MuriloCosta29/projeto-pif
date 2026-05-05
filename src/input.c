@@ -1,5 +1,7 @@
 #include "input.h"
+#include "dados.h"
 #include "raylib.h"
+#include <stdbool.h>
 
 void atualizarMedidor(Medidor *m) {
   if (!m->ativo) {
@@ -69,6 +71,7 @@ void processarInput(Jogo *j) {
 
       j->bola.potencia = forca;
       j->bola.em_movimento = true;
+      j->estado_atual = CHUTANDO;
 
       m->ativo = false;
       break;
