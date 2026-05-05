@@ -4,17 +4,21 @@
 void desenhar_campo(void) {
     ClearBackground(SKYBLUE);
 
-    DrawRectangle(0, 300, 800, 300, DARKGREEN);
+    // campo maior
+    DrawRectangle(0, 340, 1000, 360, DARKGREEN);
 
     // linhas da área em perspectiva
-    DrawLine(120, 270, 680, 270, WHITE);
-    DrawLine(180, 230, 620, 230, WHITE);
-    DrawLine(120, 270, 180, 230, WHITE);
-    DrawLine(680, 270, 620, 230, WHITE);
+    DrawLine(140, 310, 860, 310, WHITE);
+    DrawLine(230, 260, 770, 260, WHITE);
+    DrawLine(140, 310, 230, 260, WHITE);
+    DrawLine(860, 310, 770, 260, WHITE);
+
+    // sol simples
+    DrawCircle(900, 80, 45, YELLOW);
 }
 
 void desenhar_gol_bonito(float x, float y, float largura, float altura) {
-    float profundidade = 35.0f;
+    float profundidade = 45.0f;
 
     Color brancoFrente = WHITE;
     Color brancoFundo = Fade(WHITE, 0.55f);
@@ -31,23 +35,23 @@ void desenhar_gol_bonito(float x, float y, float largura, float altura) {
     Vector2 fundoInfEsq = { x + profundidade, y + altura + profundidade * 0.35f };
     Vector2 fundoInfDir = { x + largura - profundidade, y + altura + profundidade * 0.35f };
 
-    DrawEllipse(x + largura / 2, y + altura + 18, largura / 2.2f, 18, sombra);
+    // sombra
+    DrawEllipse(x + largura / 2, y + altura + 22, largura / 2.2f, 22, sombra);
 
-    DrawLineEx(frenteSupEsq, frenteSupDir, 4.0f, brancoFrente);
-    DrawLineEx(frenteSupEsq, frenteInfEsq, 4.0f, brancoFrente);
-    DrawLineEx(frenteSupDir, frenteInfDir, 4.0f, brancoFrente);
-
+    // rede de fundo
     DrawLineEx(fundoSupEsq, fundoSupDir, 2.0f, brancoFundo);
     DrawLineEx(fundoSupEsq, fundoInfEsq, 2.0f, brancoFundo);
     DrawLineEx(fundoSupDir, fundoInfDir, 2.0f, brancoFundo);
 
+    // ligações da frente ao fundo
     DrawLineEx(frenteSupEsq, fundoSupEsq, 2.0f, brancoFundo);
     DrawLineEx(frenteSupDir, fundoSupDir, 2.0f, brancoFundo);
     DrawLineEx(frenteInfEsq, fundoInfEsq, 2.0f, brancoFundo);
     DrawLineEx(frenteInfDir, fundoInfDir, 2.0f, brancoFundo);
 
-    for (int i = 1; i < 8; i++) {
-        float t = i / 8.0f;
+    // rede vertical
+    for (int i = 1; i < 10; i++) {
+        float t = i / 10.0f;
 
         Vector2 p1 = {
             frenteSupEsq.x + (frenteSupDir.x - frenteSupEsq.x) * t,
@@ -73,8 +77,9 @@ void desenhar_gol_bonito(float x, float y, float largura, float altura) {
         DrawLineEx(p3, p4, 1.0f, corRede);
     }
 
-    for (int i = 1; i < 6; i++) {
-        float t = i / 6.0f;
+    // rede horizontal
+    for (int i = 1; i < 7; i++) {
+        float t = i / 7.0f;
 
         Vector2 esqFrente = {
             frenteSupEsq.x,
@@ -100,12 +105,18 @@ void desenhar_gol_bonito(float x, float y, float largura, float altura) {
         DrawLineEx(dirFrente, dirFundo, 1.0f, corRede);
         DrawLineEx(esqFundo, dirFundo, 1.0f, corRede);
     }
+
+    // trave da frente por cima
+    DrawLineEx(frenteSupEsq, frenteSupDir, 6.0f, brancoFrente);
+    DrawLineEx(frenteSupEsq, frenteInfEsq, 6.0f, brancoFrente);
+    DrawLineEx(frenteSupDir, frenteInfDir, 6.0f, brancoFrente);
 }
 
 void desenhar_bola(Bola *bola) {
     DrawCircle(bola->x + 4, bola->y + 4, 10, Fade(BLACK, 0.3f));
     DrawCircle(bola->x, bola->y, 10, WHITE);
     DrawCircleLines(bola->x, bola->y, 10, BLACK);
+    DrawCircle(bola->x - 3, bola->y - 3, 3, BLACK);
 }
 
 void desenhar_medidor(Jogo *jogo) {
@@ -121,7 +132,7 @@ void desenhar_medidor(Jogo *jogo) {
         nomeMedidor = "CHUTE!";
     }
 
-    DrawText(nomeMedidor, 330, 500, 24, BLACK);
+    DrawText(nomeMedidor, 430, 600, 24, BLACK);
 
     DrawRectangle(
         jogo->medidor_atual.x,

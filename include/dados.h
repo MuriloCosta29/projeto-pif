@@ -65,6 +65,11 @@ typedef struct {
   Goleiro goleiro;
   Defensor *barreira;
   Medidor medidor_atual;
+  
+  float gol_x;
+  float gol_y;
+  float gol_largura;
+  float gol_altura;
 
   EstadoJogo estado_atual;
 } Jogo;
