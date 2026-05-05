@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "dados.h"
 #include "fisica.h"
+#include "gol.h"
 #include "input.h"
 #include "desenho.h"
 
@@ -22,10 +23,10 @@ void resetar_cobranca(Jogo *jogo) {
 }
 
 int bola_entrou_no_gol(Jogo *jogo) {
-  return jogo->bola.x >= jogo->gol_x &&
-         jogo->bola.x <= jogo->gol_x + jogo->gol_largura &&
-         jogo->bola.y >= jogo->gol_y &&
-         jogo->bola.y <= jogo->gol_y + jogo->gol_altura;
+  return jogo->bola.x >= jogo->gol.x &&
+         jogo->bola.x <= jogo->gol.x + jogo->gol.largura &&
+         jogo->bola.y >= jogo->gol.y &&
+         jogo->bola.y <= jogo->gol.y + jogo->gol.altura;
 }
 
 int main() {
@@ -33,6 +34,8 @@ int main() {
   SetTargetFPS(60);
 
   Jogo jogo = {0};
+
+  inicializar_gol(&jogo.gol);
 
   inicializar_bola(&jogo.bola);
 
@@ -56,11 +59,6 @@ int main() {
   jogo.medidor_atual.ativo = true;
   jogo.medidor_atual.tipo = 0;
 
-  jogo.gol_x = 280;
-  jogo.gol_y = 100;
-  jogo.gol_largura = 440;
-  jogo.gol_altura = 140;
-
   while (!WindowShouldClose()) {
     processarInput(&jogo);
     atualizar_bola(&jogo.bola);
@@ -80,10 +78,10 @@ int main() {
     desenhar_campo();
 
     desenhar_gol_bonito(
-      jogo.gol_x,
-      jogo.gol_y,
-      jogo.gol_largura,
-      jogo.gol_altura
+      jogo.gol.x,
+      jogo.gol.y,
+      jogo.gol.largura,
+      jogo.gol.altura
     );
 
     desenhar_bola(&jogo.bola);
