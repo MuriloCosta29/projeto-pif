@@ -47,6 +47,8 @@ int main() {
       jogo.medidor_atual.direcao_movimento = 1;
       jogo.medidor_atual.ativo = true;
       jogo.medidor_atual.tipo = 0;
+
+      jogo.estado_atual = MIRANDO;
     }
 
     BeginDrawing();
