@@ -1,5 +1,6 @@
 #include "input.h"
 #include "dados.h"
+#include "fisica.h"
 #include "medidor.h"
 #include "raylib.h"
 #include <stdbool.h>
@@ -45,17 +46,9 @@ void processarInput(Jogo *j) {
 
     case 3: {
       j->forca_chute = m->valor_atual;
-
-      float forca = 6.0f + (j->forca_chute * 8.0f);
-
-      j->bola.velocidade_x = (j->direcao_chute - 0.5f) * forca;
-      j->bola.velocidade_y = -(3.0f + j->altura_chute * forca);
-      j->bola.curva = (j->curva_chute - 0.5f) * 0.12f;
-
-      j->bola.potencia = forca;
-      j->bola.em_movimento = true;
+      chutar_bola(&j->bola, j->direcao_chute, j->altura_chute, j->curva_chute,
+                  j->forca_chute);
       j->estado_atual = CHUTANDO;
-
       m->ativo = false;
       break;
     }
