@@ -1,5 +1,6 @@
 #include "dados.h"
 #include "fisica.h"
+#include "gol.h"
 #include "input.h"
 #include "raylib.h"
 
@@ -8,6 +9,8 @@ int main() {
   SetTargetFPS(60);
 
   Jogo jogo = {0};
+
+  inicializar_gol(&jogo.gol);
 
   inicializar_bola(&jogo.bola);
 
@@ -56,7 +59,8 @@ int main() {
 
     DrawRectangle(0, 300, 800, 300, DARKGREEN);
 
-    DrawRectangleLines(250, 100, 300, 120, WHITE);
+    DrawRectangleLines(jogo.gol.x, jogo.gol.y, jogo.gol.largura,
+                       jogo.gol.altura, WHITE);
 
     DrawCircle(jogo.bola.x + 4, jogo.bola.y + 4, 10, Fade(BLACK, 0.3f));
     DrawCircle(jogo.bola.x, jogo.bola.y, 10, WHITE);

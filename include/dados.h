@@ -52,6 +52,14 @@ typedef enum {
 } EstadoJogo;
 
 typedef struct {
+  float x;
+  float y;
+  float largura;
+  float altura;
+  int matriz[3][3];
+} Gol;
+
+typedef struct {
   int pontuacao_atual;
   int chances_restantes;
 
@@ -65,6 +73,7 @@ typedef struct {
   Goleiro goleiro;
   Defensor *barreira;
   Medidor medidor_atual;
+  Gol gol;
 
   EstadoJogo estado_atual;
 } Jogo;
