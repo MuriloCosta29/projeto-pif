@@ -1,25 +1,8 @@
 #include "input.h"
 #include "dados.h"
+#include "medidor.h"
 #include "raylib.h"
 #include <stdbool.h>
-
-void atualizarMedidor(Medidor *m) {
-  if (!m->ativo) {
-    return;
-  }
-
-  m->valor_atual += m->velocidade * m->direcao_movimento;
-
-  if (m->valor_atual >= 1.0f) {
-    m->valor_atual = 1.0f;
-    m->direcao_movimento = -1;
-  }
-
-  if (m->valor_atual <= 0.0f) {
-    m->valor_atual = 0.0f;
-    m->direcao_movimento = 1;
-  }
-}
 
 void processarInput(Jogo *j) {
   Medidor *m = &j->medidor_atual;
@@ -39,7 +22,7 @@ void processarInput(Jogo *j) {
     return;
   }
 
-  atualizarMedidor(m);
+  atualizar_medidor(m);
 
   if (IsKeyPressed(KEY_SPACE)) {
 
