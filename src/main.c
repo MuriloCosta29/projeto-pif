@@ -1,18 +1,44 @@
+#include "raylib.h"
 #include "dados.h"
 #include "fisica.h"
 #include "input.h"
-#include "raylib.h"
+#include "desenho.h"
+
+void resetar_cobranca(Jogo *jogo) {
+  resetar_bola(&jogo->bola);
+
+  jogo->estado_atual = MIRANDO;
+
+  jogo->etapa_chute = 0;
+  jogo->direcao_chute = 0.5f;
+  jogo->altura_chute = 0.5f;
+  jogo->curva_chute = 0.5f;
+  jogo->forca_chute = 0.5f;
+
+  jogo->medidor_atual.valor_atual = 0.5f;
+  jogo->medidor_atual.direcao_movimento = 1;
+  jogo->medidor_atual.ativo = true;
+  jogo->medidor_atual.tipo = 0;
+}
+
+int bola_entrou_no_gol(Jogo *jogo) {
+  return jogo->bola.x >= jogo->gol_x &&
+         jogo->bola.x <= jogo->gol_x + jogo->gol_largura &&
+         jogo->bola.y >= jogo->gol_y &&
+         jogo->bola.y <= jogo->gol_y + jogo->gol_altura;
+}
 
 int main() {
-  InitWindow(800, 600, "Stan James - Teste Medidor");
+  InitWindow(1000, 700, "Stan James - Free Kick");
   SetTargetFPS(60);
 
   Jogo jogo = {0};
 
   inicializar_bola(&jogo.bola);
 
-  jogo.estado_atual = MENU; // JOGANDO
+  jogo.estado_atual = MIRANDO;
   jogo.chances_restantes = 5;
+  jogo.pontuacao_atual = 0;
 
   jogo.etapa_chute = 0;
   jogo.direcao_chute = 0.5f;
@@ -20,9 +46,9 @@ int main() {
   jogo.curva_chute = 0.5f;
   jogo.forca_chute = 0.5f;
 
-  jogo.medidor_atual.x = 150;
-  jogo.medidor_atual.y = 540;
-  jogo.medidor_atual.largura = 500;
+  jogo.medidor_atual.x = 200;
+  jogo.medidor_atual.y = 640;
+  jogo.medidor_atual.largura = 600;
   jogo.medidor_atual.altura = 25;
   jogo.medidor_atual.valor_atual = 0.5f;
   jogo.medidor_atual.velocidade = 0.02f;
@@ -30,71 +56,39 @@ int main() {
   jogo.medidor_atual.ativo = true;
   jogo.medidor_atual.tipo = 0;
 
+  jogo.gol_x = 280;
+  jogo.gol_y = 100;
+  jogo.gol_largura = 440;
+  jogo.gol_altura = 140;
+
   while (!WindowShouldClose()) {
     processarInput(&jogo);
     atualizar_bola(&jogo.bola);
 
-    if (jogo.bola.y > 650 || jogo.bola.x < -50 || jogo.bola.x > 850) {
-      resetar_bola(&jogo.bola);
+    if (bola_entrou_no_gol(&jogo)) {
+      jogo.pontuacao_atual++;
+      resetar_cobranca(&jogo);
+    }
 
-      jogo.etapa_chute = 0;
-      jogo.direcao_chute = 0.5f;
-      jogo.altura_chute = 0.5f;
-      jogo.curva_chute = 0.5f;
-      jogo.forca_chute = 0.5f;
-
-      jogo.medidor_atual.valor_atual = 0.5f;
-      jogo.medidor_atual.direcao_movimento = 1;
-      jogo.medidor_atual.ativo = true;
-      jogo.medidor_atual.tipo = 0;
-
-      jogo.estado_atual = MIRANDO;
+    if (jogo.bola.y > 760 || jogo.bola.x < -80 || jogo.bola.x > 1080) {
+      jogo.chances_restantes--;
+      resetar_cobranca(&jogo);
     }
 
     BeginDrawing();
-    ClearBackground(SKYBLUE);
 
-    DrawRectangle(0, 300, 800, 300, DARKGREEN);
+    desenhar_campo();
 
-    DrawRectangleLines(250, 100, 300, 120, WHITE);
+    desenhar_gol_bonito(
+      jogo.gol_x,
+      jogo.gol_y,
+      jogo.gol_largura,
+      jogo.gol_altura
+    );
 
-    DrawCircle(jogo.bola.x + 4, jogo.bola.y + 4, 10, Fade(BLACK, 0.3f));
-    DrawCircle(jogo.bola.x, jogo.bola.y, 10, WHITE);
-    DrawCircleLines(jogo.bola.x, jogo.bola.y, 10, BLACK);
-
-    const char *nomeMedidor = "DIRECAO";
-
-    if (jogo.etapa_chute == 1) {
-      nomeMedidor = "ALTURA";
-    } else if (jogo.etapa_chute == 2) {
-      nomeMedidor = "CURVA";
-    } else if (jogo.etapa_chute == 3) {
-      nomeMedidor = "FORCA";
-    } else if (jogo.etapa_chute >= 4) {
-      nomeMedidor = "CHUTE!";
-    }
-
-    DrawText("SPACE = travar medidor", 20, 20, 20, BLACK);
-    DrawText(nomeMedidor, 330, 500, 24, BLACK);
-
-    DrawRectangle(jogo.medidor_atual.x, jogo.medidor_atual.y,
-                  jogo.medidor_atual.largura, jogo.medidor_atual.altura,
-                  LIGHTGRAY);
-
-    DrawRectangleLines(jogo.medidor_atual.x, jogo.medidor_atual.y,
-                       jogo.medidor_atual.largura, jogo.medidor_atual.altura,
-                       BLACK);
-
-    float marcadorX = jogo.medidor_atual.x + jogo.medidor_atual.valor_atual *
-                                                 jogo.medidor_atual.largura;
-
-    DrawCircle(marcadorX, jogo.medidor_atual.y + 12, 10, RED);
-
-    DrawText(TextFormat("Direcao: %.2f", jogo.direcao_chute), 20, 60, 18,
-             BLACK);
-    DrawText(TextFormat("Altura: %.2f", jogo.altura_chute), 20, 85, 18, BLACK);
-    DrawText(TextFormat("Curva: %.2f", jogo.curva_chute), 20, 110, 18, BLACK);
-    DrawText(TextFormat("Forca: %.2f", jogo.forca_chute), 20, 135, 18, BLACK);
+    desenhar_bola(&jogo.bola);
+    desenhar_hud(&jogo);
+    desenhar_medidor(&jogo);
 
     EndDrawing();
   }
