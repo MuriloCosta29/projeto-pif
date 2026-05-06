@@ -1,4 +1,4 @@
-SRC = src/barreira.c src/dados.c src/fisica.c src/game.c src/goleiro.c src/input.c src/main.c src/placar.c src/render.c src/medidor.c src/gol.c
+SRC = src/barreira.c src/dados.c src/fisica.c src/game.c src/goleiro.c src/input.c src/main.c src/placar.c src/render.c src/medidor.c src/gol.c src/desenho.c
 
 all: # Compila todos os arquivos e gera o executável `stan-james`
 	cc $(SRC) -Iinclude $(shell pkg-config --libs --cflags raylib) -o build/stan-james
