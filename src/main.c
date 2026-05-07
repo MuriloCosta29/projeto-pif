@@ -1,9 +1,9 @@
-#include "raylib.h"
 #include "dados.h"
+#include "desenho.h"
 #include "fisica.h"
 #include "gol.h"
 #include "input.h"
-#include "desenho.h"
+#include "raylib.h"
 
 void resetar_cobranca(Jogo *jogo) {
   resetar_bola(&jogo->bola);
@@ -20,13 +20,6 @@ void resetar_cobranca(Jogo *jogo) {
   jogo->medidor_atual.direcao_movimento = 1;
   jogo->medidor_atual.ativo = true;
   jogo->medidor_atual.tipo = 0;
-}
-
-int bola_entrou_no_gol(Jogo *jogo) {
-  return jogo->bola.x >= jogo->gol.x &&
-         jogo->bola.x <= jogo->gol.x + jogo->gol.largura &&
-         jogo->bola.y >= jogo->gol.y &&
-         jogo->bola.y <= jogo->gol.y + jogo->gol.altura;
 }
 
 int main() {
@@ -63,7 +56,9 @@ int main() {
     processarInput(&jogo);
     atualizar_bola(&jogo.bola);
 
-    if (bola_entrou_no_gol(&jogo)) {
+    int regiao = obter_regiao_gol(&jogo.gol, &jogo.bola);
+
+    if (regiao != 0) {
       jogo.pontuacao_atual++;
       resetar_cobranca(&jogo);
     }
@@ -77,12 +72,8 @@ int main() {
 
     desenhar_campo();
 
-    desenhar_gol_bonito(
-      jogo.gol.x,
-      jogo.gol.y,
-      jogo.gol.largura,
-      jogo.gol.altura
-    );
+    desenhar_gol_bonito(jogo.gol.x, jogo.gol.y, jogo.gol.largura,
+                        jogo.gol.altura);
 
     desenhar_bola(&jogo.bola);
     desenhar_hud(&jogo);
