@@ -2,6 +2,7 @@
 #include "desenho.h"
 #include "fisica.h"
 #include "gol.h"
+#include "goleiro.h"
 #include "input.h"
 #include "raylib.h"
 
@@ -32,6 +33,8 @@ int main() {
 
   inicializar_bola(&jogo.bola);
 
+  inicializar_goleiro(&jogo.goleiro, &jogo.gol);
+
   jogo.estado_atual = MIRANDO;
   jogo.chances_restantes = 5;
   jogo.pontuacao_atual = 0;
@@ -59,8 +62,14 @@ int main() {
     int regiao = obter_regiao_gol(&jogo.gol, &jogo.bola);
 
     if (regiao != 0) {
-      jogo.pontuacao_atual++;
-      resetar_cobranca(&jogo);
+      int regiao_defesa = escolher_regiao_defesa();
+
+      if (regiao_defesa == regiao) {
+        resetar_cobranca(&jogo);
+      } else {
+        jogo.pontuacao_atual++;
+        resetar_cobranca(&jogo);
+      }
     }
 
     if (jogo.bola.y > 760 || jogo.bola.x < -80 || jogo.bola.x > 1080) {
@@ -74,6 +83,8 @@ int main() {
 
     desenhar_gol_bonito(jogo.gol.x, jogo.gol.y, jogo.gol.largura,
                         jogo.gol.altura);
+
+    desenhar_goleiro(&jogo.goleiro);
 
     desenhar_bola(&jogo.bola);
     desenhar_hud(&jogo);
