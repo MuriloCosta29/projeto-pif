@@ -14,3 +14,25 @@ void inicializar_gol(Gol *gol) {
     }
   }
 }
+
+int obter_regiao_gol(Gol *gol, Bola *bola) {
+  if (bola->x < gol->x || bola->x > gol->x + gol->largura || bola->y < gol->y ||
+      bola->y > gol->y + gol->altura) {
+    return 0;
+  }
+  float largura_coluna = gol->largura / 3.0f;
+  float altura_linha = gol->altura / 3.0f;
+
+  int coluna = (bola->x - gol->x) / largura_coluna;
+  int linha = (bola->y - gol->y) / altura_linha;
+
+  if (coluna > 2) {
+    coluna = 2;
+  }
+
+  if (linha > 2) {
+    linha = 2;
+  }
+
+  return gol->matriz[linha][coluna];
+}
