@@ -1,4 +1,5 @@
 #include "barreira.h"
+#include <stdbool.h>
 #include <stdlib.h>
 
 Defensor *criar_barreira(int quantidade) {
@@ -39,4 +40,23 @@ void liberar_barreira(Defensor *barreira) {
     free(atual);
     atual = proximo;
   }
+}
+
+bool bola_colidiu_barreira(Bola *bola, Defensor *barreira) {
+  Defensor *atual = barreira;
+  float raio = 10;
+
+  while (atual != NULL) {
+    bool colidiu = bola->x + raio >= atual->x &&
+                   bola->x - raio <= atual->x + atual->largura &&
+                   bola->y + raio >= atual->y &&
+                   bola->y - raio <= atual->y + atual->altura;
+
+    if (colidiu) {
+      return true;
+    }
+
+    atual = atual->proximo;
+  }
+  return false;
 }

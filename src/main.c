@@ -62,6 +62,12 @@ int main() {
     processarInput(&jogo);
     atualizar_bola(&jogo.bola);
 
+    if (bola_colidiu_barreira(&jogo.bola, jogo.barreira)) {
+      jogo.chances_restantes--;
+      resetar_cobranca(&jogo);
+      continue;
+    }
+
     int regiao = obter_regiao_gol(&jogo.gol, &jogo.bola);
 
     if (regiao != 0) {
