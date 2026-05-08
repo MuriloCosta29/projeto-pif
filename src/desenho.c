@@ -1,105 +1,44 @@
 #include "desenho.h"
-#include "dados.h"
 #include "raylib.h"
-#include <stdlib.h>
+#include <stddef.h>
 
 void desenhar_campo(void) {
   ClearBackground(SKYBLUE);
 
-  // campo maior
-  DrawRectangle(0, 340, 1000, 360, DARKGREEN);
+  DrawRectangle(0, 220, 1000, 480, DARKGREEN);
 
-  // linhas da área em perspectiva
-  DrawLine(140, 310, 860, 310, WHITE);
-  DrawLine(230, 260, 770, 260, WHITE);
-  DrawLine(140, 310, 230, 260, WHITE);
-  DrawLine(860, 310, 770, 260, WHITE);
+  DrawLine(0, 220, 1000, 220, WHITE);
 
-  // sol simples
-  DrawCircle(900, 80, 45, YELLOW);
+  DrawLine(250, 360, 750, 360, Fade(WHITE, 0.5f));
+  DrawLine(300, 500, 700, 500, Fade(WHITE, 0.35f));
+
+  DrawCircle(900, 90, 45, YELLOW);
 }
 
 void desenhar_gol_bonito(float x, float y, float largura, float altura) {
-  float profundidade = 45.0f;
+  Color rede = Fade(LIGHTGRAY, 0.6f);
 
-  Color brancoFrente = WHITE;
-  Color brancoFundo = Fade(WHITE, 0.55f);
-  Color corRede = Fade(LIGHTGRAY, 0.65f);
-  Color sombra = Fade(BLACK, 0.18f);
+  DrawRectangleLines(x, y, largura, altura, WHITE);
 
-  Vector2 frenteSupEsq = {x, y};
-  Vector2 frenteSupDir = {x + largura, y};
-  Vector2 frenteInfEsq = {x, y + altura};
-  Vector2 frenteInfDir = {x + largura, y + altura};
+  DrawLine(x + largura / 3, y, x + largura / 3, y + altura, rede);
+  DrawLine(x + (largura / 3) * 2, y, x + (largura / 3) * 2, y + altura, rede);
 
-  Vector2 fundoSupEsq = {x + profundidade, y + profundidade * 0.35f};
-  Vector2 fundoSupDir = {x + largura - profundidade, y + profundidade * 0.35f};
-  Vector2 fundoInfEsq = {x + profundidade, y + altura + profundidade * 0.35f};
-  Vector2 fundoInfDir = {x + largura - profundidade,
-                         y + altura + profundidade * 0.35f};
+  DrawLine(x, y + altura / 3, x + largura, y + altura / 3, rede);
+  DrawLine(x, y + (altura / 3) * 2, x + largura, y + (altura / 3) * 2, rede);
 
-  // sombra
-  DrawEllipse(x + largura / 2, y + altura + 22, largura / 2.2f, 22, sombra);
-
-  // rede de fundo
-  DrawLineEx(fundoSupEsq, fundoSupDir, 2.0f, brancoFundo);
-  DrawLineEx(fundoSupEsq, fundoInfEsq, 2.0f, brancoFundo);
-  DrawLineEx(fundoSupDir, fundoInfDir, 2.0f, brancoFundo);
-
-  // ligações da frente ao fundo
-  DrawLineEx(frenteSupEsq, fundoSupEsq, 2.0f, brancoFundo);
-  DrawLineEx(frenteSupDir, fundoSupDir, 2.0f, brancoFundo);
-  DrawLineEx(frenteInfEsq, fundoInfEsq, 2.0f, brancoFundo);
-  DrawLineEx(frenteInfDir, fundoInfDir, 2.0f, brancoFundo);
-
-  // rede vertical
-  for (int i = 1; i < 10; i++) {
-    float t = i / 10.0f;
-
-    Vector2 p1 = {frenteSupEsq.x + (frenteSupDir.x - frenteSupEsq.x) * t,
-                  frenteSupEsq.y};
-
-    Vector2 p2 = {fundoSupEsq.x + (fundoSupDir.x - fundoSupEsq.x) * t,
-                  fundoSupEsq.y};
-
-    Vector2 p3 = {frenteInfEsq.x + (frenteInfDir.x - frenteInfEsq.x) * t,
-                  frenteInfEsq.y};
-
-    Vector2 p4 = {fundoInfEsq.x + (fundoInfDir.x - fundoInfEsq.x) * t,
-                  fundoInfEsq.y};
-
-    DrawLineEx(p1, p2, 1.0f, corRede);
-    DrawLineEx(p3, p4, 1.0f, corRede);
-  }
-
-  // rede horizontal
-  for (int i = 1; i < 7; i++) {
-    float t = i / 7.0f;
-
-    Vector2 esqFrente = {frenteSupEsq.x, frenteSupEsq.y + altura * t};
-
-    Vector2 dirFrente = {frenteSupDir.x, frenteSupDir.y + altura * t};
-
-    Vector2 esqFundo = {fundoSupEsq.x, fundoSupEsq.y + altura * t};
-
-    Vector2 dirFundo = {fundoSupDir.x, fundoSupDir.y + altura * t};
-
-    DrawLineEx(esqFrente, esqFundo, 1.0f, corRede);
-    DrawLineEx(dirFrente, dirFundo, 1.0f, corRede);
-    DrawLineEx(esqFundo, dirFundo, 1.0f, corRede);
-  }
-
-  // trave da frente por cima
-  DrawLineEx(frenteSupEsq, frenteSupDir, 6.0f, brancoFrente);
-  DrawLineEx(frenteSupEsq, frenteInfEsq, 6.0f, brancoFrente);
-  DrawLineEx(frenteSupDir, frenteInfDir, 6.0f, brancoFrente);
+  DrawRectangleLinesEx((Rectangle){x, y, largura, altura}, 6, WHITE);
 }
 
 void desenhar_bola(Bola *bola) {
-  DrawCircle(bola->x + 4, bola->y + 4, 10, Fade(BLACK, 0.3f));
-  DrawCircle(bola->x, bola->y, 10, WHITE);
-  DrawCircleLines(bola->x, bola->y, 10, BLACK);
-  DrawCircle(bola->x - 3, bola->y - 3, 3, BLACK);
+  float bola_y_visual = bola->y - bola->z;
+  float raio = 10 + bola->z * 0.03f;
+
+  DrawEllipse(bola->x + 4, bola->y + 6, 12, 5, Fade(BLACK, 0.35f));
+
+  DrawCircle(bola->x + 4, bola_y_visual + 4, raio, Fade(BLACK, 0.3f));
+  DrawCircle(bola->x, bola_y_visual, raio, WHITE);
+  DrawCircleLines(bola->x, bola_y_visual, raio, BLACK);
+  DrawCircle(bola->x - 3, bola_y_visual - 3, raio * 0.28f, BLACK);
 }
 
 void desenhar_medidor(Jogo *jogo) {
@@ -145,15 +84,57 @@ void desenhar_hud(Jogo *jogo) {
 }
 
 void desenhar_goleiro(Goleiro *goleiro) {
+  float centro_x = goleiro->x + goleiro->largura / 2;
+
+  DrawCircle(centro_x, goleiro->y - 12, 14, BEIGE);
+
   DrawRectangle(goleiro->x, goleiro->y, goleiro->largura, goleiro->altura,
                 BLUE);
+
+  DrawLine(goleiro->x, goleiro->y + 20, goleiro->x - 25, goleiro->y + 45, BLUE);
+
+  DrawLine(goleiro->x + goleiro->largura, goleiro->y + 20,
+           goleiro->x + goleiro->largura + 25, goleiro->y + 45, BLUE);
+
+  DrawLine(centro_x, goleiro->y + goleiro->altura, centro_x - 15,
+           goleiro->y + goleiro->altura + 25, BLACK);
+
+  DrawLine(centro_x, goleiro->y + goleiro->altura, centro_x + 15,
+           goleiro->y + goleiro->altura + 25, BLACK);
 }
 
 void desenhar_barreira(Defensor *barreira) {
   Defensor *atual = barreira;
 
   while (atual != NULL) {
-    DrawRectangle(atual->x, atual->y, atual->largura, atual->altura, RED);
+    float centro_x = atual->x + atual->largura / 2;
+
+    float deslocamento_pulo = 0;
+    if (atual->esta_pulando) {
+      float progresso = (30 - atual->tempo_pulo) / 30.0f;
+      deslocamento_pulo = -4 * progresso * (1 - progresso) * 40;
+    }
+
+    float y_desenho = atual->y + deslocamento_pulo;
+
+    DrawEllipse(centro_x, atual->y + atual->altura + 28, atual->largura * 0.7f,
+                4, Fade(BLACK, 0.3f));
+
+    DrawCircle(centro_x, y_desenho - 10, 12, BEIGE);
+
+    DrawRectangle(atual->x, y_desenho, atual->largura, atual->altura, RED);
+
+    DrawLine(centro_x, y_desenho + atual->altura, centro_x - 12,
+             y_desenho + atual->altura + 25, BLACK);
+
+    DrawLine(centro_x, y_desenho + atual->altura, centro_x + 12,
+             y_desenho + atual->altura + 25, BLACK);
+
+    DrawLine(atual->x, y_desenho + 20, atual->x - 12, y_desenho + 45, BLACK);
+
+    DrawLine(atual->x + atual->largura, y_desenho + 20,
+             atual->x + atual->largura + 12, y_desenho + 45, BLACK);
+
     atual = atual->proximo;
   }
 }

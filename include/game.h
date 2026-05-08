@@ -5,3 +5,4 @@
 
 void inicializar_jogo(Jogo *jogo);
 void atualizar_jogo(Jogo *jogo);
+void resetar_cobranca(Jogo *jogo);
