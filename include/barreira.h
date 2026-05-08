@@ -2,8 +2,10 @@
 #define BARREIRA_H
 
 #include "dados.h"
+#include <stdbool.h>
 
 Defensor *criar_barreira(int quantidade);
 void liberar_barreira(Defensor *barreira);
+bool bola_colidiu_barreira(Bola *bola, Defensor *barreira);
 
 #endif
