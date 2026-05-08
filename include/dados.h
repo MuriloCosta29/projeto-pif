@@ -6,8 +6,10 @@
 typedef struct {
   float x;
   float y;
+  float z;
   float velocidade_x;
   float velocidade_y;
+  float velocidade_z;
   float potencia;
   float curva;
   bool em_movimento;
@@ -28,6 +30,8 @@ typedef struct Defensor {
   float largura;
   float altura;
   bool esta_pulando;
+  int tempo_pulo;
+  bool ja_tentou_pular;
   struct Defensor *proximo;
 } Defensor;
 
