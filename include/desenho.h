@@ -9,5 +9,6 @@ void desenhar_bola(Bola *bola);
 void desenhar_medidor(Jogo *jogo);
 void desenhar_hud(Jogo *jogo);
 void desenhar_goleiro(Goleiro *goleiro);
+void desenhar_barreira(Defensor *barreira);
 
 #endif

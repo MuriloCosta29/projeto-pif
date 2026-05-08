@@ -1,3 +1,4 @@
+#include "barreira.h"
 #include "dados.h"
 #include "desenho.h"
 #include "fisica.h"
@@ -34,6 +35,8 @@ int main() {
   inicializar_bola(&jogo.bola);
 
   inicializar_goleiro(&jogo.goleiro, &jogo.gol);
+
+  jogo.barreira = criar_barreira(4);
 
   jogo.estado_atual = MIRANDO;
   jogo.chances_restantes = 5;
@@ -86,6 +89,7 @@ int main() {
 
     desenhar_goleiro(&jogo.goleiro);
 
+    desenhar_barreira(jogo.barreira);
     desenhar_bola(&jogo.bola);
     desenhar_hud(&jogo);
     desenhar_medidor(&jogo);
@@ -93,6 +97,7 @@ int main() {
     EndDrawing();
   }
 
+  liberar_barreira(jogo.barreira);
   CloseWindow();
   return 0;
 }

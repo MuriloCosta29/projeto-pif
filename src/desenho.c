@@ -1,6 +1,7 @@
 #include "desenho.h"
 #include "dados.h"
 #include "raylib.h"
+#include <stdlib.h>
 
 void desenhar_campo(void) {
   ClearBackground(SKYBLUE);
@@ -146,4 +147,13 @@ void desenhar_hud(Jogo *jogo) {
 void desenhar_goleiro(Goleiro *goleiro) {
   DrawRectangle(goleiro->x, goleiro->y, goleiro->largura, goleiro->altura,
                 BLUE);
+}
+
+void desenhar_barreira(Defensor *barreira) {
+  Defensor *atual = barreira;
+
+  while (atual != NULL) {
+    DrawRectangle(atual->x, atual->y, atual->largura, atual->altura, RED);
+    atual = atual->proximo;
+  }
 }
