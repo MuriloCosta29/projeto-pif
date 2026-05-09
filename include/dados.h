@@ -3,6 +3,10 @@
 
 #include <stdbool.h>
 
+#define TORCIDA_LINHAS 5
+#define TORCIDA_COLUNAS 14
+#define MAX_TORCEDORES (TORCIDA_LINHAS * TORCIDA_COLUNAS)
+
 typedef struct {
   float x;
   float y;
@@ -55,6 +59,29 @@ typedef enum {
   GAME_OVER = 4
 } EstadoJogo;
 
+typedef enum {
+  TORCIDA_NORMAL = 0,
+  TORCIDA_COMEMORANDO = 1,
+  TORCIDA_DESANIMADA = 2
+} EstadoTorcida;
+
+typedef struct {
+  float x;
+  float y;
+  unsigned char cor_r;
+  unsigned char cor_g;
+  unsigned char cor_b;
+  float fase;
+} Torcedor;
+
+typedef struct {
+  Torcedor torcedores[MAX_TORCEDORES];
+  int qtd;
+  EstadoTorcida estado;
+  int tempo_evento;
+  float tempo;
+} Torcida;
+
 typedef struct {
   float x;
   float y;
@@ -78,6 +105,7 @@ typedef struct {
   Defensor *barreira;
   Medidor medidor_atual;
   Gol gol;
+  Torcida torcida;
 
   EstadoJogo estado_atual;
 } Jogo;

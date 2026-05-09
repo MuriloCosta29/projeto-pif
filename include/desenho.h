@@ -10,5 +10,6 @@ void desenhar_medidor(Jogo *jogo);
 void desenhar_hud(Jogo *jogo);
 void desenhar_goleiro(Goleiro *goleiro);
 void desenhar_barreira(Defensor *barreira);
+void desenhar_torcida(Torcida *torcida);
 
 #endif
