@@ -381,3 +381,62 @@ void desenhar_barreira(Defensor *barreira) {
     atual = atual->proximo;
   }
 }
+
+void desenhar_menu(void) {
+  desenhar_campo();
+  DrawRectangle(0, 0, 1000, 700, Fade(BLACK, 0.55f));
+
+  const char *titulo = "STAN JAMES";
+  const char *subtitulo = "FREE KICK";
+  const char *instrucao = "Pressione SPACE para comecar";
+  const char *controles_titulo = "CONTROLES";
+  const char *ctrl1 = "SPACE - travar DIRECAO";
+  const char *ctrl2 = "SPACE - travar ALTURA";
+  const char *ctrl3 = "SPACE - travar CURVA";
+  const char *ctrl4 = "SPACE - travar FORCA e chutar";
+
+  int titulo_w = MeasureText(titulo, 80);
+  DrawText(titulo, 500 - titulo_w / 2, 130, 80, WHITE);
+
+  int sub_w = MeasureText(subtitulo, 40);
+  DrawText(subtitulo, 500 - sub_w / 2, 220, 40, (Color){255, 215, 100, 255});
+
+  int instr_w = MeasureText(instrucao, 28);
+  DrawText(instrucao, 500 - instr_w / 2, 320, 28, WHITE);
+
+  int ctitulo_w = MeasureText(controles_titulo, 24);
+  DrawText(controles_titulo, 500 - ctitulo_w / 2, 420, 24,
+           (Color){255, 215, 100, 255});
+
+  int c1_w = MeasureText(ctrl1, 20);
+  int c2_w = MeasureText(ctrl2, 20);
+  int c3_w = MeasureText(ctrl3, 20);
+  int c4_w = MeasureText(ctrl4, 20);
+  DrawText(ctrl1, 500 - c1_w / 2, 460, 20, LIGHTGRAY);
+  DrawText(ctrl2, 500 - c2_w / 2, 490, 20, LIGHTGRAY);
+  DrawText(ctrl3, 500 - c3_w / 2, 520, 20, LIGHTGRAY);
+  DrawText(ctrl4, 500 - c4_w / 2, 550, 20, LIGHTGRAY);
+}
+
+void desenhar_game_over(Jogo *jogo) {
+  desenhar_campo();
+  DrawRectangle(0, 0, 1000, 700, Fade(BLACK, 0.65f));
+
+  const char *titulo = "FIM DE JOGO";
+  const char *instrucao = "Pressione SPACE para reiniciar";
+
+  int titulo_w = MeasureText(titulo, 70);
+  DrawText(titulo, 500 - titulo_w / 2, 180, 70, WHITE);
+
+  const char *rotulo_pontos = "Pontuacao Final";
+  int rot_w = MeasureText(rotulo_pontos, 28);
+  DrawText(rotulo_pontos, 500 - rot_w / 2, 300, 28,
+           (Color){255, 215, 100, 255});
+
+  const char *placar = TextFormat("%d", jogo->pontuacao_atual);
+  int placar_w = MeasureText(placar, 90);
+  DrawText(placar, 500 - placar_w / 2, 340, 90, WHITE);
+
+  int instr_w = MeasureText(instrucao, 26);
+  DrawText(instrucao, 500 - instr_w / 2, 490, 26, LIGHTGRAY);
+}

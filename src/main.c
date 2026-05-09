@@ -17,24 +17,29 @@ int main() {
 
   while (!WindowShouldClose()) {
     processarInput(&jogo);
-    atualizar_bola(&jogo.bola);
-    atualizar_jogo(&jogo);
+
+    if (jogo.estado_atual != MENU && jogo.estado_atual != GAME_OVER) {
+      atualizar_bola(&jogo.bola);
+      atualizar_jogo(&jogo);
+    }
 
     BeginDrawing();
 
-    desenhar_campo();
-
-    desenhar_torcida(&jogo.torcida);
-
-    desenhar_gol_bonito(jogo.gol.x, jogo.gol.y, jogo.gol.largura,
-                        jogo.gol.altura);
-
-    desenhar_goleiro(&jogo.goleiro);
-
-    desenhar_barreira(jogo.barreira);
-    desenhar_bola(&jogo.bola);
-    desenhar_hud(&jogo);
-    desenhar_medidor(&jogo);
+    if (jogo.estado_atual == MENU) {
+      desenhar_menu();
+    } else if (jogo.estado_atual == GAME_OVER) {
+      desenhar_game_over(&jogo);
+    } else {
+      desenhar_campo();
+      desenhar_torcida(&jogo.torcida);
+      desenhar_gol_bonito(jogo.gol.x, jogo.gol.y, jogo.gol.largura,
+                          jogo.gol.altura);
+      desenhar_goleiro(&jogo.goleiro);
+      desenhar_barreira(jogo.barreira);
+      desenhar_bola(&jogo.bola);
+      desenhar_hud(&jogo);
+      desenhar_medidor(&jogo);
+    }
 
     EndDrawing();
   }

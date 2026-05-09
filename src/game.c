@@ -37,7 +37,37 @@ void inicializar_jogo(Jogo *jogo) {
   jogo->medidor_atual.tipo = 0;
 }
 
+void reiniciar_jogo(Jogo *jogo) {
+  liberar_barreira(jogo->barreira);
+
+  jogo->pontuacao_atual = 0;
+  jogo->chances_restantes = 5;
+
+  inicializar_bola(&jogo->bola);
+  inicializar_goleiro(&jogo->goleiro, &jogo->gol);
+  jogo->barreira = criar_barreira(4);
+  inicializar_torcida(&jogo->torcida);
+
+  jogo->etapa_chute = 0;
+  jogo->direcao_chute = 0.5f;
+  jogo->altura_chute = 0.5f;
+  jogo->curva_chute = 0.5f;
+  jogo->forca_chute = 0.5f;
+
+  jogo->medidor_atual.valor_atual = 0.5f;
+  jogo->medidor_atual.direcao_movimento = 1;
+  jogo->medidor_atual.ativo = true;
+  jogo->medidor_atual.tipo = 0;
+
+  jogo->estado_atual = MIRANDO;
+}
+
 void resetar_cobranca(Jogo *jogo) {
+  if (jogo->chances_restantes <= 0) {
+    jogo->estado_atual = GAME_OVER;
+    return;
+  }
+
   resetar_bola(&jogo->bola);
   resetar_barreira(jogo->barreira);
 
