@@ -1,6 +1,7 @@
 #include "input.h"
 #include "dados.h"
 #include "fisica.h"
+#include "game.h"
 #include "medidor.h"
 #include "raylib.h"
 #include <stdbool.h>
@@ -11,6 +12,13 @@ void processarInput(Jogo *j) {
   if (j->estado_atual == MENU) {
     if (IsKeyPressed(KEY_SPACE)) {
       j->estado_atual = MIRANDO;
+    }
+    return;
+  }
+
+  if (j->estado_atual == GAME_OVER) {
+    if (IsKeyPressed(KEY_SPACE)) {
+      reiniciar_jogo(j);
     }
     return;
   }
