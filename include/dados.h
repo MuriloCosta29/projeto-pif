@@ -1,6 +1,7 @@
 #ifndef DADOS_H
 #define DADOS_H
 
+#include "audio.h"
 #include <stdbool.h>
 
 typedef struct {
@@ -78,6 +79,7 @@ typedef struct {
   Defensor *barreira;
   Medidor medidor_atual;
   Gol gol;
+  AudioJogo audio;
 
   EstadoJogo estado_atual;
 } Jogo;

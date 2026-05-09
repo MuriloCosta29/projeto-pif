@@ -1,3 +1,4 @@
+#include "audio.h"
 #include "barreira.h"
 #include "desenho.h"
 #include "fisica.h"
@@ -12,6 +13,7 @@ int main() {
   Jogo jogo = {0};
 
   inicializar_jogo(&jogo);
+  inicializar_audio(&jogo.audio);
 
   while (!WindowShouldClose()) {
     processarInput(&jogo);
@@ -36,6 +38,7 @@ int main() {
   }
 
   liberar_barreira(jogo.barreira);
+  liberar_audio(&jogo.audio);
   CloseWindow();
   return 0;
 }

@@ -51,6 +51,8 @@ void processarInput(Jogo *j) {
                   j->curva_chute,
                   j->forca_chute);
 
+      tocar_chute(&j->audio);
+
       j->estado_atual = CHUTANDO;
       m->ativo = false;
       break;

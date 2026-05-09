@@ -54,9 +54,10 @@ void resetar_cobranca(Jogo *jogo) {
 }
 
 void atualizar_jogo(Jogo *jogo) {
-  atualizar_barreira(jogo->barreira, &jogo->bola);
+  atualizar_barreira(jogo->barreira, &jogo->bola, &jogo->audio);
 
   if (bola_colidiu_barreira(&jogo->bola, jogo->barreira)) {
+    tocar_colisao(&jogo->audio);
     jogo->chances_restantes--;
     resetar_cobranca(jogo);
     return;
@@ -68,8 +69,10 @@ void atualizar_jogo(Jogo *jogo) {
     int regiao_defesa = escolher_regiao_defesa();
 
     if (regiao_defesa == regiao) {
+      tocar_defesa(&jogo->audio);
       resetar_cobranca(jogo);
     } else {
+      tocar_gol(&jogo->audio);
       jogo->pontuacao_atual++;
       resetar_cobranca(jogo);
     }
