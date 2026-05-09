@@ -1,6 +1,7 @@
 #ifndef DADOS_H
 #define DADOS_H
 
+#include "audio.h"
 #include <stdbool.h>
 
 #define TORCIDA_LINHAS 5
@@ -106,6 +107,8 @@ typedef struct {
   Medidor medidor_atual;
   Gol gol;
   Torcida torcida;
+  AudioJogo audio;
+  
 
   EstadoJogo estado_atual;
 } Jogo;
