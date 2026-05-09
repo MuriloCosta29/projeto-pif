@@ -3,6 +3,7 @@
 #include "fisica.h"
 #include "gol.h"
 #include "goleiro.h"
+#include "torcida.h"
 #include <stddef.h>
 #include <stdlib.h>
 #include <time.h>
@@ -18,6 +19,7 @@ void inicializar_jogo(Jogo *jogo) {
   inicializar_bola(&jogo->bola);
   inicializar_goleiro(&jogo->goleiro, &jogo->gol);
   jogo->barreira = criar_barreira(4);
+  inicializar_torcida(&jogo->torcida);
   jogo->etapa_chute = 0;
   jogo->direcao_chute = 0.5f;
   jogo->altura_chute = 0.5f;
@@ -55,9 +57,11 @@ void resetar_cobranca(Jogo *jogo) {
 
 void atualizar_jogo(Jogo *jogo) {
   atualizar_barreira(jogo->barreira, &jogo->bola);
+  atualizar_torcida(&jogo->torcida);
 
   if (bola_colidiu_barreira(&jogo->bola, jogo->barreira)) {
     jogo->chances_restantes--;
+    torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
     resetar_cobranca(jogo);
     return;
   }
@@ -68,15 +72,18 @@ void atualizar_jogo(Jogo *jogo) {
     int regiao_defesa = escolher_regiao_defesa();
 
     if (regiao_defesa == regiao) {
+      torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
       resetar_cobranca(jogo);
     } else {
       jogo->pontuacao_atual++;
+      torcida_reage(&jogo->torcida, TORCIDA_COMEMORANDO);
       resetar_cobranca(jogo);
     }
   }
 
   if (jogo->bola.y > 760 || jogo->bola.x < -80 || jogo->bola.x > 1080) {
     jogo->chances_restantes--;
+    torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
     resetar_cobranca(jogo);
   }
 }

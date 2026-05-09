@@ -22,6 +22,8 @@ int main() {
 
     desenhar_campo();
 
+    desenhar_torcida(&jogo.torcida);
+
     desenhar_gol_bonito(jogo.gol.x, jogo.gol.y, jogo.gol.largura,
                         jogo.gol.altura);
 
