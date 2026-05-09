@@ -42,32 +42,53 @@ void desenhar_bola(Bola *bola) {
 }
 
 void desenhar_medidor(Jogo *jogo) {
-  const char *nomeMedidor = "DIRECAO";
+  const char *titulo = "DIRECAO";
+  const char *rot_esq = "ESQ";
+  const char *rot_meio = "CENTRO";
+  const char *rot_dir = "DIR";
 
   if (jogo->etapa_chute == 1) {
-    nomeMedidor = "ALTURA";
+    titulo = "ALTURA";
+    rot_esq = "BAIXA";
+    rot_meio = "MEDIA";
+    rot_dir = "ALTA";
   } else if (jogo->etapa_chute == 2) {
-    nomeMedidor = "CURVA";
+    titulo = "CURVA";
+    rot_esq = "ESQ";
+    rot_meio = "RETA";
+    rot_dir = "DIR";
   } else if (jogo->etapa_chute == 3) {
-    nomeMedidor = "FORCA";
+    titulo = "FORCA";
+    rot_esq = "FRACA";
+    rot_meio = "MEDIA";
+    rot_dir = "FORTE";
   } else if (jogo->etapa_chute >= 4) {
-    nomeMedidor = "CHUTE!";
+    titulo = "CHUTE!";
+    rot_esq = "";
+    rot_meio = "";
+    rot_dir = "";
   }
 
-  DrawText(nomeMedidor, 430, 600, 24, BLACK);
+  Medidor *m = &jogo->medidor_atual;
 
-  DrawRectangle(jogo->medidor_atual.x, jogo->medidor_atual.y,
-                jogo->medidor_atual.largura, jogo->medidor_atual.altura,
-                LIGHTGRAY);
+  int titulo_w = MeasureText(titulo, 24);
+  DrawText(titulo, m->x + m->largura / 2 - titulo_w / 2, m->y - 32, 24, BLACK);
 
-  DrawRectangleLines(jogo->medidor_atual.x, jogo->medidor_atual.y,
-                     jogo->medidor_atual.largura, jogo->medidor_atual.altura,
-                     BLACK);
+  DrawRectangle(m->x, m->y, m->largura, m->altura, LIGHTGRAY);
+  DrawRectangleLines(m->x, m->y, m->largura, m->altura, BLACK);
 
-  float marcadorX = jogo->medidor_atual.x + jogo->medidor_atual.valor_atual *
-                                                jogo->medidor_atual.largura;
+  int rot_size = 18;
+  int meio_w = MeasureText(rot_meio, rot_size);
+  int dir_w = MeasureText(rot_dir, rot_size);
+  int rot_y = m->y + m->altura + 6;
 
-  DrawCircle(marcadorX, jogo->medidor_atual.y + 12, 10, RED);
+  DrawText(rot_esq, m->x, rot_y, rot_size, DARKGRAY);
+  DrawText(rot_meio, m->x + m->largura / 2 - meio_w / 2, rot_y, rot_size,
+           DARKGRAY);
+  DrawText(rot_dir, m->x + m->largura - dir_w, rot_y, rot_size, DARKGRAY);
+
+  float marcadorX = m->x + m->valor_atual * m->largura;
+  DrawCircle(marcadorX, m->y + m->altura / 2, 10, RED);
 }
 
 void desenhar_hud(Jogo *jogo) {
@@ -85,26 +106,57 @@ void desenhar_hud(Jogo *jogo) {
 
 void desenhar_goleiro(Goleiro *goleiro) {
   float centro_x = goleiro->x + goleiro->largura / 2;
+  float topo_camisa = goleiro->y;
+  float fim_camisa = goleiro->y + goleiro->altura * 0.55f;
+  float fim_calcao = goleiro->y + goleiro->altura;
 
-  DrawCircle(centro_x, goleiro->y - 12, 14, BEIGE);
+  Color cor_camisa = (Color){40, 90, 170, 255};
+  Color cor_calcao = (Color){25, 25, 25, 255};
+  Color cor_luva = (Color){255, 170, 30, 255};
+  Color cor_cabelo = (Color){70, 45, 25, 255};
 
-  DrawRectangle(goleiro->x, goleiro->y, goleiro->largura, goleiro->altura,
-                BLUE);
+  DrawEllipse(centro_x, fim_calcao + 24, 22, 5, Fade(BLACK, 0.3f));
 
-  DrawLine(goleiro->x, goleiro->y + 20, goleiro->x - 25, goleiro->y + 45, BLUE);
+  DrawRectangle(centro_x - 5, fim_calcao, 4, 20, BEIGE);
+  DrawRectangle(centro_x + 1, fim_calcao, 4, 20, BEIGE);
+  DrawRectangle(centro_x - 9, fim_calcao + 18, 12, 4, BLACK);
+  DrawRectangle(centro_x - 3, fim_calcao + 18, 12, 4, BLACK);
 
-  DrawLine(goleiro->x + goleiro->largura, goleiro->y + 20,
-           goleiro->x + goleiro->largura + 25, goleiro->y + 45, BLUE);
+  DrawRectangle(goleiro->x, fim_camisa, goleiro->largura,
+                fim_calcao - fim_camisa, cor_calcao);
 
-  DrawLine(centro_x, goleiro->y + goleiro->altura, centro_x - 15,
-           goleiro->y + goleiro->altura + 25, BLACK);
+  DrawRectangle(goleiro->x, topo_camisa, goleiro->largura,
+                fim_camisa - topo_camisa, cor_camisa);
+  DrawLine(goleiro->x, fim_camisa, goleiro->x + goleiro->largura, fim_camisa,
+           BLACK);
 
-  DrawLine(centro_x, goleiro->y + goleiro->altura, centro_x + 15,
-           goleiro->y + goleiro->altura + 25, BLACK);
+  DrawTriangle((Vector2){centro_x, topo_camisa},
+               (Vector2){centro_x - 6, topo_camisa + 8},
+               (Vector2){centro_x + 6, topo_camisa + 8}, BEIGE);
+
+  Vector2 ombro_esq = {goleiro->x + 4, topo_camisa + 8};
+  Vector2 ombro_dir = {goleiro->x + goleiro->largura - 4, topo_camisa + 8};
+  Vector2 mao_esq = {goleiro->x - 18, topo_camisa - 12};
+  Vector2 mao_dir = {goleiro->x + goleiro->largura + 18, topo_camisa - 12};
+
+  DrawLineEx(ombro_esq, mao_esq, 7, cor_camisa);
+  DrawLineEx(ombro_dir, mao_dir, 7, cor_camisa);
+  DrawCircle(mao_esq.x, mao_esq.y, 8, cor_luva);
+  DrawCircle(mao_dir.x, mao_dir.y, 8, cor_luva);
+
+  DrawCircle(centro_x, topo_camisa - 12, 13, BEIGE);
+  DrawCircleSector((Vector2){centro_x, topo_camisa - 14}, 13, 180, 360, 16,
+                   cor_cabelo);
+  DrawCircle(centro_x - 4, topo_camisa - 12, 1.5f, BLACK);
+  DrawCircle(centro_x + 4, topo_camisa - 12, 1.5f, BLACK);
 }
 
 void desenhar_barreira(Defensor *barreira) {
   Defensor *atual = barreira;
+
+  Color cor_camisa = (Color){200, 40, 40, 255};
+  Color cor_calcao = (Color){240, 240, 240, 255};
+  Color cor_cabelo = (Color){45, 30, 20, 255};
 
   while (atual != NULL) {
     float centro_x = atual->x + atual->largura / 2;
@@ -116,24 +168,45 @@ void desenhar_barreira(Defensor *barreira) {
     }
 
     float y_desenho = atual->y + deslocamento_pulo;
+    float topo_camisa = y_desenho;
+    float fim_camisa = y_desenho + atual->altura * 0.6f;
+    float fim_calcao = y_desenho + atual->altura;
 
     DrawEllipse(centro_x, atual->y + atual->altura + 28, atual->largura * 0.7f,
                 4, Fade(BLACK, 0.3f));
 
-    DrawCircle(centro_x, y_desenho - 10, 12, BEIGE);
+    DrawRectangle(centro_x - 5, fim_calcao, 4, 18, BEIGE);
+    DrawRectangle(centro_x + 1, fim_calcao, 4, 18, BEIGE);
+    DrawRectangle(centro_x - 8, fim_calcao + 16, 10, 4, BLACK);
+    DrawRectangle(centro_x - 2, fim_calcao + 16, 10, 4, BLACK);
 
-    DrawRectangle(atual->x, y_desenho, atual->largura, atual->altura, RED);
+    DrawRectangle(atual->x, fim_camisa, atual->largura, fim_calcao - fim_camisa,
+                  cor_calcao);
 
-    DrawLine(centro_x, y_desenho + atual->altura, centro_x - 12,
-             y_desenho + atual->altura + 25, BLACK);
+    DrawRectangle(atual->x, topo_camisa, atual->largura,
+                  fim_camisa - topo_camisa, cor_camisa);
+    DrawLine(atual->x, fim_camisa, atual->x + atual->largura, fim_camisa,
+             BLACK);
 
-    DrawLine(centro_x, y_desenho + atual->altura, centro_x + 12,
-             y_desenho + atual->altura + 25, BLACK);
+    DrawTriangle((Vector2){centro_x, topo_camisa},
+                 (Vector2){centro_x - 4, topo_camisa + 6},
+                 (Vector2){centro_x + 4, topo_camisa + 6}, BEIGE);
 
-    DrawLine(atual->x, y_desenho + 20, atual->x - 12, y_desenho + 45, BLACK);
+    Vector2 ombro_esq = {atual->x + 3, topo_camisa + 8};
+    Vector2 ombro_dir = {atual->x + atual->largura - 3, topo_camisa + 8};
+    Vector2 mao_esq = {centro_x + 3, fim_camisa + 4};
+    Vector2 mao_dir = {centro_x - 3, fim_camisa + 4};
 
-    DrawLine(atual->x + atual->largura, y_desenho + 20,
-             atual->x + atual->largura + 12, y_desenho + 45, BLACK);
+    DrawLineEx(ombro_esq, mao_esq, 5, cor_camisa);
+    DrawLineEx(ombro_dir, mao_dir, 5, cor_camisa);
+    DrawCircle(mao_esq.x, mao_esq.y, 3.5f, BEIGE);
+    DrawCircle(mao_dir.x, mao_dir.y, 3.5f, BEIGE);
+
+    DrawCircle(centro_x, topo_camisa - 10, 11, BEIGE);
+    DrawCircleSector((Vector2){centro_x, topo_camisa - 12}, 11, 180, 360, 16,
+                     cor_cabelo);
+    DrawCircle(centro_x - 3, topo_camisa - 10, 1.3f, BLACK);
+    DrawCircle(centro_x + 3, topo_camisa - 10, 1.3f, BLACK);
 
     atual = atual->proximo;
   }
