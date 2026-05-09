@@ -55,3 +55,6 @@ dkms.conf
 *.dwo
 
 compile_flags.txt
+
+# MacOS file
+.DS_Store
