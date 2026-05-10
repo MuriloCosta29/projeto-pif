@@ -2,11 +2,8 @@
 #define DADOS_H
 
 #include "audio.h"
+#include "sprites.h"
 #include <stdbool.h>
-
-#define TORCIDA_LINHAS 5
-#define TORCIDA_COLUNAS 14
-#define MAX_TORCEDORES (TORCIDA_LINHAS * TORCIDA_COLUNAS)
 
 typedef struct {
   float x;
@@ -23,10 +20,18 @@ typedef struct {
 typedef struct {
   float x;
   float y;
+  float inicio_x;
+  float inicio_y;
+  float alvo_x;
+  float alvo_y;
   float largura;
   float altura;
   float velocidade;
+  int regiao_defesa;
+  int tempo_defesa;
+  int duracao_defesa;
   bool esta_pulando;
+  bool defendendo;
 } Goleiro;
 
 typedef struct Defensor {
@@ -75,17 +80,6 @@ typedef enum {
 } EstadoTorcida;
 
 typedef struct {
-  float x;
-  float y;
-  unsigned char cor_r;
-  unsigned char cor_g;
-  unsigned char cor_b;
-  float fase;
-} Torcedor;
-
-typedef struct {
-  Torcedor torcedores[MAX_TORCEDORES];
-  int qtd;
   EstadoTorcida estado;
   int tempo_evento;
   float tempo;
@@ -117,6 +111,7 @@ typedef struct {
   Gol gol;
   Torcida torcida;
   AudioJogo audio;
+  SpritesJogo sprites;
   ResultadoChute resultado_chute;
 
   EstadoJogo estado_atual;

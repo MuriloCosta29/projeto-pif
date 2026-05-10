@@ -65,18 +65,18 @@ void desenhar_campo(void) {
   DrawCircle(500, 470, 3, Fade(WHITE, 0.6f));
 }
 
-void desenhar_gol_bonito(float x, float y, float largura, float altura) {
-  Color rede = Fade(LIGHTGRAY, 0.6f);
+void desenhar_gol(Gol *gol, Texture2D sprite) {
+  float escala = 1.45f;
+  float largura = gol->largura * escala;
+  float altura = gol->altura * escala;
 
-  DrawRectangleLines(x, y, largura, altura, WHITE);
+  float centro_x = gol->x + gol->largura / 2.0f;
+  float centro_y = gol->y + gol->altura / 2.0f;
 
-  DrawLine(x + largura / 3, y, x + largura / 3, y + altura, rede);
-  DrawLine(x + (largura / 3) * 2, y, x + (largura / 3) * 2, y + altura, rede);
-
-  DrawLine(x, y + altura / 3, x + largura, y + altura / 3, rede);
-  DrawLine(x, y + (altura / 3) * 2, x + largura, y + (altura / 3) * 2, rede);
-
-  DrawRectangleLinesEx((Rectangle){x, y, largura, altura}, 6, WHITE);
+  Rectangle src = {0, 0, (float)sprite.width, (float)sprite.height};
+  Rectangle dst = {centro_x - largura / 2.0f, centro_y - altura / 2.0f, largura,
+                   altura};
+  DrawTexturePro(sprite, src, dst, (Vector2){0, 0}, 0, WHITE);
 }
 
 void desenhar_bola(Bola *bola) {
@@ -161,181 +161,122 @@ void desenhar_medidor(Jogo *jogo) {
 }
 
 void desenhar_hud(Jogo *jogo) {
-  DrawText("SPACE = travar medidor", 20, 20, 20, BLACK);
-  DrawText(TextFormat("Gols: %d", jogo->pontuacao_atual), 20, 50, 20, BLACK);
-  DrawText(TextFormat("Chances: %d", jogo->chances_restantes), 20, 80, 20,
-           BLACK);
+  Rectangle painel = {20, 520, 165, 92};
+  DrawRectangleRounded(painel, 0.12f, 8, Fade((Color){20, 35, 28, 255}, 0.78f));
+  DrawRectangleRoundedLines(painel, 0.12f, 8, (Color){235, 235, 220, 210});
 
-  DrawText(TextFormat("Direcao: %.2f", jogo->direcao_chute), 20, 120, 18,
-           BLACK);
-  DrawText(TextFormat("Altura: %.2f", jogo->altura_chute), 20, 145, 18, BLACK);
-  DrawText(TextFormat("Curva: %.2f", jogo->curva_chute), 20, 170, 18, BLACK);
-  DrawText(TextFormat("Forca: %.2f", jogo->forca_chute), 20, 195, 18, BLACK);
+  DrawText(TextFormat("GOLS  %d", jogo->pontuacao_atual), 36, 536, 22,
+           (Color){255, 235, 120, 255});
+  DrawText(TextFormat("CHANCES  %d", jogo->chances_restantes), 36, 566, 20,
+           WHITE);
+  DrawText("SPACE: travar", 36, 592, 16, (Color){215, 225, 215, 255});
 }
 
-void desenhar_goleiro(Goleiro *goleiro) {
+void desenhar_goleiro(Goleiro *goleiro, Texture2D sprite) {
   float centro_x = goleiro->x + goleiro->largura / 2;
-  float topo_camisa = goleiro->y;
-  float fim_camisa = goleiro->y + goleiro->altura * 0.55f;
   float fim_calcao = goleiro->y + goleiro->altura;
 
-  Color cor_camisa = (Color){40, 90, 170, 255};
-  Color cor_calcao = (Color){25, 25, 25, 255};
-  Color cor_luva = (Color){255, 170, 30, 255};
-  Color cor_cabelo = (Color){70, 45, 25, 255};
+  DrawEllipse(centro_x, fim_calcao + 24, 26, 6, Fade(BLACK, 0.3f));
 
-  DrawEllipse(centro_x, fim_calcao + 24, 22, 5, Fade(BLACK, 0.3f));
+  float display_h = 150.0f;
+  float display_w = display_h * ((float)sprite.width / (float)sprite.height);
 
-  DrawRectangle(centro_x - 5, fim_calcao, 4, 20, BEIGE);
-  DrawRectangle(centro_x + 1, fim_calcao, 4, 20, BEIGE);
-  DrawRectangle(centro_x - 9, fim_calcao + 18, 12, 4, BLACK);
-  DrawRectangle(centro_x - 3, fim_calcao + 18, 12, 4, BLACK);
+  float rotacao = 0.0f;
+  if (goleiro->defendendo) {
+    float distancia_x = goleiro->alvo_x - goleiro->inicio_x;
+    rotacao = distancia_x * 0.08f;
 
-  DrawRectangle(goleiro->x, fim_camisa, goleiro->largura,
-                fim_calcao - fim_camisa, cor_calcao);
-
-  DrawRectangle(goleiro->x, topo_camisa, goleiro->largura,
-                fim_camisa - topo_camisa, cor_camisa);
-  DrawLine(goleiro->x, fim_camisa, goleiro->x + goleiro->largura, fim_camisa,
-           BLACK);
-
-  DrawTriangle((Vector2){centro_x, topo_camisa},
-               (Vector2){centro_x - 6, topo_camisa + 8},
-               (Vector2){centro_x + 6, topo_camisa + 8}, BEIGE);
-
-  Vector2 ombro_esq = {goleiro->x + 4, topo_camisa + 8};
-  Vector2 ombro_dir = {goleiro->x + goleiro->largura - 4, topo_camisa + 8};
-  Vector2 mao_esq = {goleiro->x - 18, topo_camisa - 12};
-  Vector2 mao_dir = {goleiro->x + goleiro->largura + 18, topo_camisa - 12};
-
-  DrawLineEx(ombro_esq, mao_esq, 7, cor_camisa);
-  DrawLineEx(ombro_dir, mao_dir, 7, cor_camisa);
-  DrawCircle(mao_esq.x, mao_esq.y, 8, cor_luva);
-  DrawCircle(mao_dir.x, mao_dir.y, 8, cor_luva);
-
-  DrawCircle(centro_x, topo_camisa - 12, 13, BEIGE);
-  DrawCircleSector((Vector2){centro_x, topo_camisa - 14}, 13, 180, 360, 16,
-                   cor_cabelo);
-  DrawCircle(centro_x - 4, topo_camisa - 12, 1.5f, BLACK);
-  DrawCircle(centro_x + 4, topo_camisa - 12, 1.5f, BLACK);
-}
-
-void desenhar_torcida(Torcida *torcida) {
-  Color cor_concreto_claro = (Color){145, 145, 155, 255};
-  Color cor_concreto_escuro = (Color){95, 95, 110, 255};
-  Color cor_telhado = (Color){50, 55, 65, 255};
-  Color cor_telhado_borda = (Color){25, 28, 35, 255};
-  Color cor_pilar = (Color){70, 70, 80, 255};
-  Color cor_sombra_telhado = (Color){25, 30, 40, 180};
-  Color cor_pele = (Color){235, 200, 165, 255};
-  Color cor_cabelo = (Color){55, 40, 25, 255};
-
-  int x_estadio = 230;
-  int largura_estadio = 540;
-  int y_telhado = 30;
-  int altura_telhado = 16;
-  int y_arquibancada = y_telhado + altura_telhado;
-  int altura_arquibancada = 169;
-
-  DrawTriangle((Vector2){x_estadio - 12, y_telhado + altura_telhado},
-               (Vector2){x_estadio + 8, y_telhado},
-               (Vector2){x_estadio + largura_estadio - 8, y_telhado},
-               cor_telhado);
-  DrawTriangle(
-      (Vector2){x_estadio - 12, y_telhado + altura_telhado},
-      (Vector2){x_estadio + largura_estadio - 8, y_telhado},
-      (Vector2){x_estadio + largura_estadio + 12, y_telhado + altura_telhado},
-      cor_telhado);
-  DrawLineEx(
-      (Vector2){x_estadio - 12, y_telhado + altura_telhado},
-      (Vector2){x_estadio + largura_estadio + 12, y_telhado + altura_telhado},
-      2, cor_telhado_borda);
-  DrawLineEx((Vector2){x_estadio + 8, y_telhado},
-             (Vector2){x_estadio + largura_estadio - 8, y_telhado}, 2,
-             cor_telhado_borda);
-
-  DrawRectangleGradientV(x_estadio, y_arquibancada, largura_estadio, 14,
-                         cor_sombra_telhado,
-                         (Color){cor_sombra_telhado.r, cor_sombra_telhado.g,
-                                 cor_sombra_telhado.b, 0});
-
-  int altura_degrau = altura_arquibancada / TORCIDA_LINHAS;
-  for (int i = 0; i < TORCIDA_LINHAS; i++) {
-    int y_start = y_arquibancada + i * altura_degrau;
-    Color cor = (i % 2 == 0) ? cor_concreto_claro : cor_concreto_escuro;
-    DrawRectangle(x_estadio, y_start, largura_estadio, altura_degrau, cor);
-    DrawLine(x_estadio, y_start + altura_degrau - 1,
-             x_estadio + largura_estadio, y_start + altura_degrau - 1,
-             (Color){45, 45, 55, 255});
-  }
-
-  for (int i = 1; i < 8; i++) {
-    int x_div = x_estadio + i * (largura_estadio / 8);
-    DrawLine(x_div, y_arquibancada, x_div, y_arquibancada + altura_arquibancada,
-             Fade(BLACK, 0.10f));
-  }
-
-  DrawRectangle(x_estadio - 8, y_arquibancada, 8, altura_arquibancada,
-                cor_pilar);
-  DrawRectangle(x_estadio + largura_estadio, y_arquibancada, 8,
-                altura_arquibancada, cor_pilar);
-  DrawRectangleLines(x_estadio - 8, y_arquibancada, 8, altura_arquibancada,
-                     cor_telhado_borda);
-  DrawRectangleLines(x_estadio + largura_estadio, y_arquibancada, 8,
-                     altura_arquibancada, cor_telhado_borda);
-
-  DrawRectangleLines(x_estadio, y_arquibancada, largura_estadio,
-                     altura_arquibancada, cor_telhado_borda);
-
-  for (int i = 0; i < torcida->qtd; i++) {
-    Torcedor *t = &torcida->torcedores[i];
-
-    float dy = 0.0f;
-    bool bracos_pra_cima = false;
-
-    if (torcida->estado == TORCIDA_NORMAL) {
-      dy = sinf(torcida->tempo * 0.05f + t->fase) * 1.2f;
-    } else if (torcida->estado == TORCIDA_COMEMORANDO) {
-      float onda = sinf(torcida->tempo * 0.4f + t->fase);
-      dy = -fabsf(onda) * 6.0f;
-      bracos_pra_cima = true;
-    } else if (torcida->estado == TORCIDA_DESANIMADA) {
-      dy = 1.5f;
+    if (rotacao > 24.0f) {
+      rotacao = 24.0f;
+    } else if (rotacao < -24.0f) {
+      rotacao = -24.0f;
     }
 
-    Color cor_camisa = (Color){t->cor_r, t->cor_g, t->cor_b, 255};
-    Color cor_camisa_escura = (Color){(unsigned char)(t->cor_r * 0.7f),
-                                      (unsigned char)(t->cor_g * 0.7f),
-                                      (unsigned char)(t->cor_b * 0.7f), 255};
+    float alvo_cx = goleiro->alvo_x + goleiro->largura / 2;
+    float alvo_cy = goleiro->alvo_y + goleiro->altura / 2;
+    DrawCircleLines(alvo_cx, alvo_cy, 18,
+                    Fade((Color){255, 235, 120, 255}, 0.7f));
+  }
 
-    float cx = t->x;
-    float cy = t->y + dy;
+  Rectangle src = {0, 0, (float)sprite.width, (float)sprite.height};
+  Rectangle dst = {centro_x, fim_calcao + 24 - display_h / 2, display_w,
+                   display_h};
+  DrawTexturePro(sprite, src, dst, (Vector2){display_w / 2, display_h / 2},
+                 rotacao, WHITE);
+}
 
-    DrawRectangle(cx - 3, cy + 4, 7, 7, cor_camisa);
-    DrawRectangle(cx - 3, cy + 9, 7, 2, cor_camisa_escura);
-    DrawCircle(cx, cy + 1, 3.5f, cor_pele);
-    DrawCircleSector((Vector2){cx, cy + 0.5f}, 3.5f, 180, 360, 8, cor_cabelo);
+void desenhar_torcida(Torcida *torcida, Texture2D arquibancada) {
+  if (arquibancada.id == 0) {
+    return;
+  }
 
-    if (bracos_pra_cima) {
-      DrawLineEx((Vector2){cx - 3, cy + 5}, (Vector2){cx - 6, cy - 4}, 2,
-                 cor_camisa);
-      DrawLineEx((Vector2){cx + 3, cy + 5}, (Vector2){cx + 6, cy - 4}, 2,
-                 cor_camisa);
-      DrawCircle(cx - 6, cy - 4, 1.5f, cor_pele);
-      DrawCircle(cx + 6, cy - 4, 1.5f, cor_pele);
+  float largura = 1060.0f;
+  float altura =
+      largura * ((float)arquibancada.height / (float)arquibancada.width);
+  float x = -30.0f;
+  float y = -82.0f;
+
+  DrawRectangleGradientV(0, 0, 1000, 220, (Color){70, 140, 215, 255},
+                         (Color){150, 205, 235, 255});
+
+  Rectangle src = {0, 0, (float)arquibancada.width, (float)arquibancada.height};
+  Rectangle dst = {x, y, largura, altura};
+  DrawTexturePro(arquibancada, src, dst, (Vector2){0, 0}, 0, WHITE);
+
+  DrawRectangleGradientV(0, 165, 1000, 58, (Color){42, 50, 62, 255},
+                         (Color){24, 92, 45, 255});
+  DrawRectangle(0, 165, 1000, 3, Fade(WHITE, 0.22f));
+  DrawRectangle(0, 220, 1000, 4, (Color){20, 76, 36, 255});
+
+  Color placa_verde = (Color){31, 145, 78, 255};
+  Color placa_amarela = (Color){238, 204, 42, 255};
+  Color placa_azul = (Color){43, 96, 185, 255};
+  Color placa_vermelha = (Color){202, 42, 48, 255};
+  Color placa_branca = (Color){230, 230, 220, 255};
+
+  DrawRectangle(80, 178, 130, 28, placa_verde);
+  DrawRectangle(220, 178, 130, 28, placa_amarela);
+  DrawRectangle(360, 178, 130, 28, placa_azul);
+  DrawRectangle(510, 178, 130, 28, placa_vermelha);
+  DrawRectangle(650, 178, 130, 28, placa_branca);
+  DrawRectangle(790, 178, 130, 28, placa_verde);
+
+  for (int i = 0; i < 6; i++) {
+    int px = 80 + i * 140;
+    DrawRectangleLines(px, 178, 130, 28, Fade(BLACK, 0.30f));
+  }
+
+  if (torcida->estado == TORCIDA_DESANIMADA) {
+    DrawRectangle(0, 0, 1000, 224, Fade(BLACK, 0.20f));
+    return;
+  }
+
+  if (torcida->estado == TORCIDA_COMEMORANDO) {
+    Color cores[] = {
+        (Color){245, 210, 38, 255}, (Color){40, 165, 85, 255},
+        (Color){220, 50, 55, 255},  (Color){45, 105, 200, 255},
+        (Color){245, 245, 245, 255},
+    };
+
+    for (int i = 0; i < 30; i++) {
+      float fase = torcida->tempo * 0.08f + i * 1.7f;
+      float cx = x + 30.0f + fmodf(i * 47.0f, largura - 60.0f);
+      float cy = y + 24.0f + fmodf(i * 19.0f, altura * 0.55f);
+      float queda = fmodf(torcida->tempo * 1.4f + i * 11.0f, 34.0f);
+      Rectangle papel = {cx + sinf(fase) * 4.0f, cy + queda, 5, 3};
+      DrawRectangleRec(papel, cores[i % 5]);
     }
   }
 }
 
-void desenhar_barreira(Defensor *barreira) {
+void desenhar_barreira(Defensor *barreira, Texture2D sprite_a,
+                       Texture2D sprite_b) {
   Defensor *atual = barreira;
-
-  Color cor_camisa = (Color){200, 40, 40, 255};
-  Color cor_calcao = (Color){240, 240, 240, 255};
-  Color cor_cabelo = (Color){45, 30, 20, 255};
+  int indice = 0;
 
   while (atual != NULL) {
     float centro_x = atual->x + atual->largura / 2;
+    float fim_calcao = atual->y + atual->altura;
 
     float deslocamento_pulo = 0;
     if (atual->esta_pulando) {
@@ -343,49 +284,39 @@ void desenhar_barreira(Defensor *barreira) {
       deslocamento_pulo = -4 * progresso * (1 - progresso) * 40;
     }
 
-    float y_desenho = atual->y + deslocamento_pulo;
-    float topo_camisa = y_desenho;
-    float fim_camisa = y_desenho + atual->altura * 0.6f;
-    float fim_calcao = y_desenho + atual->altura;
+    DrawEllipse(centro_x, fim_calcao + 28, atual->largura * 0.85f, 4,
+                Fade(BLACK, 0.3f));
 
-    DrawEllipse(centro_x, atual->y + atual->altura + 28, atual->largura * 0.7f,
-                4, Fade(BLACK, 0.3f));
+    Texture2D sprite = (indice % 2 == 0) ? sprite_a : sprite_b;
+    float display_h = 130.0f;
+    float display_w = display_h * ((float)sprite.width / (float)sprite.height);
 
-    DrawRectangle(centro_x - 5, fim_calcao, 4, 18, BEIGE);
-    DrawRectangle(centro_x + 1, fim_calcao, 4, 18, BEIGE);
-    DrawRectangle(centro_x - 8, fim_calcao + 16, 10, 4, BLACK);
-    DrawRectangle(centro_x - 2, fim_calcao + 16, 10, 4, BLACK);
+    Rectangle src = {0, 0, (float)sprite.width, (float)sprite.height};
+    Rectangle dst = {centro_x - display_w / 2,
+                     fim_calcao + 28 - display_h + deslocamento_pulo, display_w,
+                     display_h};
 
-    DrawRectangle(atual->x, fim_camisa, atual->largura, fim_calcao - fim_camisa,
-                  cor_calcao);
-
-    DrawRectangle(atual->x, topo_camisa, atual->largura,
-                  fim_camisa - topo_camisa, cor_camisa);
-    DrawLine(atual->x, fim_camisa, atual->x + atual->largura, fim_camisa,
-             BLACK);
-
-    DrawTriangle((Vector2){centro_x, topo_camisa},
-                 (Vector2){centro_x - 4, topo_camisa + 6},
-                 (Vector2){centro_x + 4, topo_camisa + 6}, BEIGE);
-
-    Vector2 ombro_esq = {atual->x + 3, topo_camisa + 8};
-    Vector2 ombro_dir = {atual->x + atual->largura - 3, topo_camisa + 8};
-    Vector2 mao_esq = {centro_x + 3, fim_camisa + 4};
-    Vector2 mao_dir = {centro_x - 3, fim_camisa + 4};
-
-    DrawLineEx(ombro_esq, mao_esq, 5, cor_camisa);
-    DrawLineEx(ombro_dir, mao_dir, 5, cor_camisa);
-    DrawCircle(mao_esq.x, mao_esq.y, 3.5f, BEIGE);
-    DrawCircle(mao_dir.x, mao_dir.y, 3.5f, BEIGE);
-
-    DrawCircle(centro_x, topo_camisa - 10, 11, BEIGE);
-    DrawCircleSector((Vector2){centro_x, topo_camisa - 12}, 11, 180, 360, 16,
-                     cor_cabelo);
-    DrawCircle(centro_x - 3, topo_camisa - 10, 1.3f, BLACK);
-    DrawCircle(centro_x + 3, topo_camisa - 10, 1.3f, BLACK);
+    DrawTexturePro(sprite, src, dst, (Vector2){0, 0}, 0, WHITE);
 
     atual = atual->proximo;
+    indice++;
   }
+}
+
+void desenhar_cobrador(Bola *bola, Texture2D sprite) {
+  float pos_x = bola->x - 38;
+  float pos_y_pes = bola->y + 8;
+
+  DrawEllipse(pos_x, pos_y_pes + 6, 24, 5, Fade(BLACK, 0.3f));
+
+  float display_h = 150.0f;
+  float display_w = display_h * ((float)sprite.width / (float)sprite.height);
+
+  Rectangle src = {0, 0, (float)sprite.width, (float)sprite.height};
+  Rectangle dst = {pos_x - display_w / 2, pos_y_pes - display_h, display_w,
+                   display_h};
+
+  DrawTexturePro(sprite, src, dst, (Vector2){0, 0}, 0, WHITE);
 }
 
 void desenhar_menu(void) {

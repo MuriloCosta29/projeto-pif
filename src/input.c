@@ -2,6 +2,7 @@
 #include "dados.h"
 #include "fisica.h"
 #include "game.h"
+#include "goleiro.h"
 #include "medidor.h"
 #include "raylib.h"
 #include <stdbool.h>
@@ -59,6 +60,7 @@ void processarInput(Jogo *j) {
                   j->curva_chute,
                   j->forca_chute);
 
+      iniciar_defesa_goleiro(&j->goleiro, &j->gol);
       tocar_chute(&j->audio);
 
       j->estado_atual = CHUTANDO;
