@@ -1,5 +1,6 @@
 #include "audio.h"
 #include "barreira.h"
+#include "dados.h"
 #include "desenho.h"
 #include "fisica.h"
 #include "game.h"
@@ -39,6 +40,10 @@ int main() {
       desenhar_bola(&jogo.bola);
       desenhar_hud(&jogo);
       desenhar_medidor(&jogo);
+
+      if (jogo.estado_atual == RESULTADO) {
+        desenhar_resultado(&jogo);
+      }
     }
 
     EndDrawing();

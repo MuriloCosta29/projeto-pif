@@ -13,5 +13,6 @@ void desenhar_barreira(Defensor *barreira);
 void desenhar_torcida(Torcida *torcida);
 void desenhar_menu(void);
 void desenhar_game_over(Jogo *jogo);
+void desenhar_resultado(Jogo *jogo);
 
 #endif
