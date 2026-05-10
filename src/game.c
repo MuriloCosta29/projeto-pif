@@ -74,6 +74,7 @@ void resetar_cobranca(Jogo *jogo) {
   }
 
   resetar_bola(&jogo->bola);
+  inicializar_goleiro(&jogo->goleiro, &jogo->gol);
   resetar_barreira(jogo->barreira);
   jogo->resultado_chute = CHUTE_NENHUM;
   jogo->tempo_resultado = 0;
@@ -105,6 +106,7 @@ void atualizar_jogo(Jogo *jogo) {
   }
 
   atualizar_barreira(jogo->barreira, &jogo->bola, &jogo->audio);
+  atualizar_goleiro(&jogo->goleiro);
   atualizar_torcida(&jogo->torcida);
 
   if (bola_colidiu_barreira(&jogo->bola, jogo->barreira)) {
@@ -120,7 +122,7 @@ void atualizar_jogo(Jogo *jogo) {
   int regiao = obter_regiao_gol(&jogo->gol, &jogo->bola);
 
   if (regiao != 0) {
-    int regiao_defesa = escolher_regiao_defesa();
+    int regiao_defesa = jogo->goleiro.regiao_defesa;
 
     if (regiao_defesa == regiao) {
       tocar_defesa(&jogo->audio);
