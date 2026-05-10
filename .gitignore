@@ -58,3 +58,6 @@ compile_flags.txt
 
 # MacOS file
 .DS_Store
+
+# Arquivos compilados.
+build/

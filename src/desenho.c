@@ -84,9 +84,11 @@ void desenhar_bola(Bola *bola) {
   float raio = 10 + bola->z * 0.03f;
 
   float sombra_largura = 12 - bola->z * 0.04f;
-  if (sombra_largura < 5) sombra_largura = 5;
+  if (sombra_largura < 5)
+    sombra_largura = 5;
   float sombra_alpha = 0.38f - bola->z * 0.003f;
-  if (sombra_alpha < 0.08f) sombra_alpha = 0.08f;
+  if (sombra_alpha < 0.08f)
+    sombra_alpha = 0.08f;
   DrawEllipse(bola->x, bola->y + 8, sombra_largura, sombra_largura * 0.42f,
               Fade(BLACK, sombra_alpha));
 
@@ -96,14 +98,14 @@ void desenhar_bola(Bola *bola) {
                    Fade((Color){70, 80, 100, 255}, 0.22f));
 
   DrawCircle(bola->x, bola_y_visual, raio * 0.30f, BLACK);
-  DrawCircle(bola->x + raio * 0.55f, bola_y_visual - raio * 0.30f,
-             raio * 0.14f, BLACK);
-  DrawCircle(bola->x - raio * 0.55f, bola_y_visual - raio * 0.30f,
-             raio * 0.14f, BLACK);
+  DrawCircle(bola->x + raio * 0.55f, bola_y_visual - raio * 0.30f, raio * 0.14f,
+             BLACK);
+  DrawCircle(bola->x - raio * 0.55f, bola_y_visual - raio * 0.30f, raio * 0.14f,
+             BLACK);
   DrawCircle(bola->x, bola_y_visual + raio * 0.62f, raio * 0.14f, BLACK);
 
-  DrawCircle(bola->x - raio * 0.40f, bola_y_visual - raio * 0.50f,
-             raio * 0.22f, Fade(WHITE, 0.75f));
+  DrawCircle(bola->x - raio * 0.40f, bola_y_visual - raio * 0.50f, raio * 0.22f,
+             Fade(WHITE, 0.75f));
 
   DrawCircleLines(bola->x, bola_y_visual, raio, (Color){40, 40, 40, 255});
 }
@@ -239,13 +241,15 @@ void desenhar_torcida(Torcida *torcida) {
                (Vector2){x_estadio + 8, y_telhado},
                (Vector2){x_estadio + largura_estadio - 8, y_telhado},
                cor_telhado);
-  DrawTriangle((Vector2){x_estadio - 12, y_telhado + altura_telhado},
-               (Vector2){x_estadio + largura_estadio - 8, y_telhado},
-               (Vector2){x_estadio + largura_estadio + 12, y_telhado + altura_telhado},
-               cor_telhado);
-  DrawLineEx((Vector2){x_estadio - 12, y_telhado + altura_telhado},
-             (Vector2){x_estadio + largura_estadio + 12, y_telhado + altura_telhado},
-             2, cor_telhado_borda);
+  DrawTriangle(
+      (Vector2){x_estadio - 12, y_telhado + altura_telhado},
+      (Vector2){x_estadio + largura_estadio - 8, y_telhado},
+      (Vector2){x_estadio + largura_estadio + 12, y_telhado + altura_telhado},
+      cor_telhado);
+  DrawLineEx(
+      (Vector2){x_estadio - 12, y_telhado + altura_telhado},
+      (Vector2){x_estadio + largura_estadio + 12, y_telhado + altura_telhado},
+      2, cor_telhado_borda);
   DrawLineEx((Vector2){x_estadio + 8, y_telhado},
              (Vector2){x_estadio + largura_estadio - 8, y_telhado}, 2,
              cor_telhado_borda);
@@ -260,8 +264,9 @@ void desenhar_torcida(Torcida *torcida) {
     int y_start = y_arquibancada + i * altura_degrau;
     Color cor = (i % 2 == 0) ? cor_concreto_claro : cor_concreto_escuro;
     DrawRectangle(x_estadio, y_start, largura_estadio, altura_degrau, cor);
-    DrawLine(x_estadio, y_start + altura_degrau - 1, x_estadio + largura_estadio,
-             y_start + altura_degrau - 1, (Color){45, 45, 55, 255});
+    DrawLine(x_estadio, y_start + altura_degrau - 1,
+             x_estadio + largura_estadio, y_start + altura_degrau - 1,
+             (Color){45, 45, 55, 255});
   }
 
   for (int i = 1; i < 8; i++) {
@@ -270,7 +275,8 @@ void desenhar_torcida(Torcida *torcida) {
              Fade(BLACK, 0.10f));
   }
 
-  DrawRectangle(x_estadio - 8, y_arquibancada, 8, altura_arquibancada, cor_pilar);
+  DrawRectangle(x_estadio - 8, y_arquibancada, 8, altura_arquibancada,
+                cor_pilar);
   DrawRectangle(x_estadio + largura_estadio, y_arquibancada, 8,
                 altura_arquibancada, cor_pilar);
   DrawRectangleLines(x_estadio - 8, y_arquibancada, 8, altura_arquibancada,
@@ -298,9 +304,9 @@ void desenhar_torcida(Torcida *torcida) {
     }
 
     Color cor_camisa = (Color){t->cor_r, t->cor_g, t->cor_b, 255};
-    Color cor_camisa_escura = (Color){
-        (unsigned char)(t->cor_r * 0.7f), (unsigned char)(t->cor_g * 0.7f),
-        (unsigned char)(t->cor_b * 0.7f), 255};
+    Color cor_camisa_escura = (Color){(unsigned char)(t->cor_r * 0.7f),
+                                      (unsigned char)(t->cor_g * 0.7f),
+                                      (unsigned char)(t->cor_b * 0.7f), 255};
 
     float cx = t->x;
     float cy = t->y + dy;
@@ -439,4 +445,33 @@ void desenhar_game_over(Jogo *jogo) {
 
   int instr_w = MeasureText(instrucao, 26);
   DrawText(instrucao, 500 - instr_w / 2, 490, 26, LIGHTGRAY);
+}
+
+void desenhar_resultado(Jogo *jogo) {
+  const char *texto = NULL;
+  Color cor = WHITE;
+
+  if (jogo->resultado_chute == CHUTE_GOL) {
+    texto = "GOL!";
+    cor = (Color){255, 215, 0, 255};
+  } else if (jogo->resultado_chute == CHUTE_DEFESA) {
+    texto = "DEFESA!";
+    cor = BLUE;
+  } else if (jogo->resultado_chute == CHUTE_BARREIRA) {
+    texto = "BARREIRA!";
+    cor = RED;
+  } else if (jogo->resultado_chute == CHUTE_FORA) {
+    texto = "FORA!";
+    cor = ORANGE;
+  }
+
+  if (texto == NULL) {
+    return;
+  }
+
+  int tamanho = 70;
+  int largura_texto = MeasureText(texto, tamanho);
+
+  DrawRectangle(0, 0, 1000, 700, Fade(BLACK, 0.35f));
+  DrawText(texto, 500 - largura_texto / 2, 280, tamanho, cor);
 }

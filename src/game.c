@@ -1,5 +1,6 @@
 #include "game.h"
 #include "barreira.h"
+#include "dados.h"
 #include "fisica.h"
 #include "gol.h"
 #include "goleiro.h"
@@ -20,6 +21,8 @@ void inicializar_jogo(Jogo *jogo) {
   inicializar_goleiro(&jogo->goleiro, &jogo->gol);
   jogo->barreira = criar_barreira(4);
   inicializar_torcida(&jogo->torcida);
+  jogo->resultado_chute = CHUTE_NENHUM; // Diz qual foi o resultado
+  jogo->tempo_resultado = 0; // diz por quanto tempo mostrar o resultado
   jogo->etapa_chute = 0;
   jogo->direcao_chute = 0.5f;
   jogo->altura_chute = 0.5f;
@@ -47,6 +50,8 @@ void reiniciar_jogo(Jogo *jogo) {
   inicializar_goleiro(&jogo->goleiro, &jogo->gol);
   jogo->barreira = criar_barreira(4);
   inicializar_torcida(&jogo->torcida);
+  jogo->resultado_chute = CHUTE_NENHUM;
+  jogo->tempo_resultado = 0;
 
   jogo->etapa_chute = 0;
   jogo->direcao_chute = 0.5f;
@@ -70,6 +75,8 @@ void resetar_cobranca(Jogo *jogo) {
 
   resetar_bola(&jogo->bola);
   resetar_barreira(jogo->barreira);
+  jogo->resultado_chute = CHUTE_NENHUM;
+  jogo->tempo_resultado = 0;
 
   jogo->estado_atual = MIRANDO;
 
@@ -86,6 +93,17 @@ void resetar_cobranca(Jogo *jogo) {
 }
 
 void atualizar_jogo(Jogo *jogo) {
+
+  if (jogo->estado_atual == RESULTADO) {
+    jogo->tempo_resultado--;
+
+    if (jogo->tempo_resultado <= 0) {
+      resetar_cobranca(jogo);
+    }
+
+    return;
+  }
+
   atualizar_barreira(jogo->barreira, &jogo->bola, &jogo->audio);
   atualizar_torcida(&jogo->torcida);
 
@@ -93,7 +111,9 @@ void atualizar_jogo(Jogo *jogo) {
     tocar_colisao(&jogo->audio);
     jogo->chances_restantes--;
     torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
-    resetar_cobranca(jogo);
+    jogo->resultado_chute = CHUTE_BARREIRA;
+    jogo->estado_atual = RESULTADO;
+    jogo->tempo_resultado = 90;
     return;
   }
 
@@ -105,18 +125,24 @@ void atualizar_jogo(Jogo *jogo) {
     if (regiao_defesa == regiao) {
       tocar_defesa(&jogo->audio);
       torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
-      resetar_cobranca(jogo);
+      jogo->resultado_chute = CHUTE_DEFESA;
+      jogo->estado_atual = RESULTADO;
+      jogo->tempo_resultado = 90;
     } else {
       tocar_gol(&jogo->audio);
       jogo->pontuacao_atual++;
       torcida_reage(&jogo->torcida, TORCIDA_COMEMORANDO);
-      resetar_cobranca(jogo);
+      jogo->resultado_chute = CHUTE_GOL;
+      jogo->estado_atual = RESULTADO;
+      jogo->tempo_resultado = 90;
     }
   }
 
   if (jogo->bola.y > 760 || jogo->bola.x < -80 || jogo->bola.x > 1080) {
     jogo->chances_restantes--;
     torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
-    resetar_cobranca(jogo);
+    jogo->resultado_chute = CHUTE_FORA;
+    jogo->estado_atual = RESULTADO;
+    jogo->tempo_resultado = 90;
   }
 }

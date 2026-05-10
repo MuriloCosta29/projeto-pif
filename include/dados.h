@@ -61,6 +61,14 @@ typedef enum {
 } EstadoJogo;
 
 typedef enum {
+  CHUTE_NENHUM,
+  CHUTE_GOL,
+  CHUTE_DEFESA,
+  CHUTE_BARREIRA,
+  CHUTE_FORA,
+} ResultadoChute;
+
+typedef enum {
   TORCIDA_NORMAL = 0,
   TORCIDA_COMEMORANDO = 1,
   TORCIDA_DESANIMADA = 2
@@ -94,6 +102,7 @@ typedef struct {
 typedef struct {
   int pontuacao_atual;
   int chances_restantes;
+  int tempo_resultado;
 
   int etapa_chute;
   float direcao_chute;
@@ -108,7 +117,7 @@ typedef struct {
   Gol gol;
   Torcida torcida;
   AudioJogo audio;
-  
+  ResultadoChute resultado_chute;
 
   EstadoJogo estado_atual;
 } Jogo;
