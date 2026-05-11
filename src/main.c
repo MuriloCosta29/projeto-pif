@@ -39,10 +39,12 @@ int main() {
       desenhar_goleiro(&jogo.goleiro, jogo.sprites.goleiro);
       desenhar_barreira(jogo.barreira, jogo.sprites.barreira_a,
                         jogo.sprites.barreira_b);
-      if (!jogo.bola.em_movimento) {
+      if (!jogo.bola.em_movimento && jogo.bola.visivel) {
         desenhar_cobrador(&jogo.bola, jogo.sprites.cobrador);
       }
-      desenhar_bola(&jogo.bola);
+      if (jogo.bola.visivel) {
+        desenhar_bola(&jogo.bola);
+      }
       desenhar_hud(&jogo);
       desenhar_medidor(&jogo);
 
