@@ -13,6 +13,7 @@ void inicializar_bola(Bola *bola) {
   bola->curva = 0;
 
   bola->em_movimento = false;
+  bola->visivel = true;
 }
 
 void atualizar_bola(Bola *b) {
@@ -45,6 +46,7 @@ void resetar_bola(Bola *bola) {
   bola->curva = 0;
 
   bola->em_movimento = false;
+  bola->visivel = true;
 }
 
 void chutar_bola(Bola *bola, float direcao, float altura, float curva,
@@ -59,4 +61,5 @@ void chutar_bola(Bola *bola, float direcao, float altura, float curva,
 
   bola->potencia = potencia;
   bola->em_movimento = true;
+  bola->visivel = true;
 }

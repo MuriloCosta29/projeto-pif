@@ -15,6 +15,7 @@ typedef struct {
   float potencia;
   float curva;
   bool em_movimento;
+  bool visivel;
 } Bola;
 
 typedef struct {

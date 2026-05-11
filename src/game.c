@@ -111,6 +111,8 @@ void atualizar_jogo(Jogo *jogo) {
 
   if (bola_colidiu_barreira(&jogo->bola, jogo->barreira)) {
     tocar_colisao(&jogo->audio);
+    jogo->bola.visivel = false;
+    jogo->bola.em_movimento = false;
     jogo->chances_restantes--;
     torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
     jogo->resultado_chute = CHUTE_BARREIRA;
@@ -132,6 +134,8 @@ void atualizar_jogo(Jogo *jogo) {
       jogo->tempo_resultado = 90;
     } else {
       tocar_gol(&jogo->audio);
+      jogo->bola.visivel = false;
+      jogo->bola.em_movimento = false;
       jogo->pontuacao_atual++;
       torcida_reage(&jogo->torcida, TORCIDA_COMEMORANDO);
       jogo->resultado_chute = CHUTE_GOL;
