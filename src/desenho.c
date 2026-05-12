@@ -374,8 +374,20 @@ void desenhar_game_over(Jogo *jogo) {
   int placar_w = MeasureText(placar, 90);
   DrawText(placar, 500 - placar_w / 2, 340, 90, WHITE);
 
+  const char *ranking = "TOP 5";
+  int ranking_w = MeasureText(ranking, 24);
+  DrawText(ranking, 500 - ranking_w / 2, 455, 24,
+           (Color){255, 215, 100, 255});
+
+  for (int i = 0; i < jogo->qtd_scores; i++) {
+    const char *linha = TextFormat("%d. %s  %d", i + 1, jogo->scores[i].nome,
+                                   jogo->scores[i].pontuacao);
+    int linha_w = MeasureText(linha, 20);
+    DrawText(linha, 500 - linha_w / 2, 488 + i * 24, 20, LIGHTGRAY);
+  }
+
   int instr_w = MeasureText(instrucao, 26);
-  DrawText(instrucao, 500 - instr_w / 2, 490, 26, LIGHTGRAY);
+  DrawText(instrucao, 500 - instr_w / 2, 625, 26, LIGHTGRAY);
 }
 
 void desenhar_resultado(Jogo *jogo) {

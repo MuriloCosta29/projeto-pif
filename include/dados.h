@@ -5,6 +5,8 @@
 #include "sprites.h"
 #include <stdbool.h>
 
+#define MAX_SCORES 5
+
 typedef struct {
   float x;
   float y;
@@ -95,9 +97,16 @@ typedef struct {
 } Gol;
 
 typedef struct {
+  char nome[50];
+  int pontuacao;
+} Score;
+
+typedef struct {
   int pontuacao_atual;
   int chances_restantes;
   int tempo_resultado;
+  int qtd_scores;
+  bool pontuacao_salva;
 
   int etapa_chute;
   float direcao_chute;
@@ -113,14 +122,10 @@ typedef struct {
   Torcida torcida;
   AudioJogo audio;
   SpritesJogo sprites;
+  Score scores[MAX_SCORES];
   ResultadoChute resultado_chute;
 
   EstadoJogo estado_atual;
 } Jogo;
-
-typedef struct {
-  char nome[50];
-  int pontuacao;
-} Score;
 
 #endif
