@@ -80,6 +80,22 @@ typedef enum {
   TORCIDA_DESANIMADA = 2
 } EstadoTorcida;
 
+typedef enum {
+  COBRANCA_PENALTI = 0,
+  COBRANCA_FALTA_ESQUERDA = 1,
+  COBRANCA_FALTA_FRONTAL = 2,
+  COBRANCA_FALTA_DIREITA = 3
+} TipoCobranca;
+
+typedef struct {
+  TipoCobranca tipo;
+  int quantidade_barreira;
+  float bola_x;
+  float bola_y;
+  float barreira_x;
+  float barreira_y;
+} Nivel;
+
 typedef struct {
   EstadoTorcida estado;
   int tempo_evento;
@@ -98,6 +114,9 @@ typedef struct {
   int pontuacao_atual;
   int chances_restantes;
   int tempo_resultado;
+  int nivel_atual;
+  int total_niveis;
+  TipoCobranca tipo_cobranca_atual;
 
   int etapa_chute;
   float direcao_chute;

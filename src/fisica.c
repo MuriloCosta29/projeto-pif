@@ -49,6 +49,11 @@ void resetar_bola(Bola *bola) {
   bola->visivel = true;
 }
 
+void posicionar_bola(Bola *bola, float x, float y) {
+  bola->x = x;
+  bola->y = y;
+}
+
 void chutar_bola(Bola *bola, float direcao, float altura, float curva,
                  float forca_chute) {
 

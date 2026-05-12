@@ -3,6 +3,10 @@
 #include <stdlib.h>
 
 Defensor *criar_barreira(int quantidade) {
+  return criar_barreira_posicionada(quantidade, 400, 390);
+}
+
+Defensor *criar_barreira_posicionada(int quantidade, float x, float y) {
   Defensor *inicio = NULL;
   Defensor *anterior = NULL;
 
@@ -15,8 +19,8 @@ Defensor *criar_barreira(int quantidade) {
 
     novo->largura = 22;
     novo->altura = 60;
-    novo->x = 400 + i * 60;
-    novo->y = 390;
+    novo->x = x + i * 60;
+    novo->y = y;
     novo->esta_pulando = false;
     novo->tempo_pulo = 0;
     novo->ja_tentou_pular = false;
