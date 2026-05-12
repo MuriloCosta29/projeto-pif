@@ -5,5 +5,6 @@
 
 void inicializar_gol(Gol *gol);
 int obter_regiao_gol(Gol *gol, Bola *bola);
+bool bola_passou_fora_do_gol(Gol *gol, Bola *bola);
 
 #endif

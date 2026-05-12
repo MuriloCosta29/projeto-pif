@@ -142,6 +142,17 @@ void atualizar_jogo(Jogo *jogo) {
       jogo->estado_atual = RESULTADO;
       jogo->tempo_resultado = 90;
     }
+
+    return;
+  }
+
+  if (bola_passou_fora_do_gol(&jogo->gol, &jogo->bola)) {
+    jogo->chances_restantes--;
+    torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
+    jogo->resultado_chute = CHUTE_FORA;
+    jogo->estado_atual = RESULTADO;
+    jogo->tempo_resultado = 90;
+    return;
   }
 
   if (jogo->bola.y > 760 || jogo->bola.x < -80 || jogo->bola.x > 1080) {
