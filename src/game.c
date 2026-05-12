@@ -4,10 +4,21 @@
 #include "fisica.h"
 #include "gol.h"
 #include "goleiro.h"
+#include "placar.h"
 #include "torcida.h"
 #include <stddef.h>
 #include <stdlib.h>
 #include <time.h>
+
+static void salvar_pontuacao_final(Jogo *jogo) {
+  if (jogo->pontuacao_salva) {
+    return;
+  }
+
+  salvar_score("JOGADOR", jogo->pontuacao_atual);
+  jogo->qtd_scores = carregar_scores(jogo->scores, MAX_SCORES);
+  jogo->pontuacao_salva = true;
+}
 
 void inicializar_jogo(Jogo *jogo) {
   srand(time(NULL));
@@ -15,6 +26,8 @@ void inicializar_jogo(Jogo *jogo) {
   jogo->estado_atual = MENU;
   jogo->pontuacao_atual = 0;
   jogo->chances_restantes = 5;
+  jogo->pontuacao_salva = false;
+  jogo->qtd_scores = carregar_scores(jogo->scores, MAX_SCORES);
 
   inicializar_gol(&jogo->gol);
   inicializar_bola(&jogo->bola);
@@ -45,6 +58,8 @@ void reiniciar_jogo(Jogo *jogo) {
 
   jogo->pontuacao_atual = 0;
   jogo->chances_restantes = 5;
+  jogo->pontuacao_salva = false;
+  jogo->qtd_scores = carregar_scores(jogo->scores, MAX_SCORES);
 
   inicializar_bola(&jogo->bola);
   inicializar_goleiro(&jogo->goleiro, &jogo->gol);
@@ -70,6 +85,7 @@ void reiniciar_jogo(Jogo *jogo) {
 void resetar_cobranca(Jogo *jogo) {
   if (jogo->chances_restantes <= 0) {
     jogo->estado_atual = GAME_OVER;
+    salvar_pontuacao_final(jogo);
     return;
   }
 
@@ -114,6 +130,9 @@ void atualizar_jogo(Jogo *jogo) {
     jogo->bola.visivel = false;
     jogo->bola.em_movimento = false;
     jogo->chances_restantes--;
+    if (jogo->chances_restantes <= 0) {
+      salvar_pontuacao_final(jogo);
+    }
     torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
     jogo->resultado_chute = CHUTE_BARREIRA;
     jogo->estado_atual = RESULTADO;
@@ -148,6 +167,9 @@ void atualizar_jogo(Jogo *jogo) {
 
   if (bola_passou_fora_do_gol(&jogo->gol, &jogo->bola)) {
     jogo->chances_restantes--;
+    if (jogo->chances_restantes <= 0) {
+      salvar_pontuacao_final(jogo);
+    }
     torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
     jogo->resultado_chute = CHUTE_FORA;
     jogo->estado_atual = RESULTADO;
@@ -157,6 +179,9 @@ void atualizar_jogo(Jogo *jogo) {
 
   if (jogo->bola.y > 760 || jogo->bola.x < -80 || jogo->bola.x > 1080) {
     jogo->chances_restantes--;
+    if (jogo->chances_restantes <= 0) {
+      salvar_pontuacao_final(jogo);
+    }
     torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
     jogo->resultado_chute = CHUTE_FORA;
     jogo->estado_atual = RESULTADO;
