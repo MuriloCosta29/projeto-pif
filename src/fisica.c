@@ -54,10 +54,10 @@ void chutar_bola(Bola *bola, float direcao, float altura, float curva,
 
   float potencia = 7.0f + (forca_chute * 7.0f);
 
-  bola->velocidade_x = (direcao - 0.5f) * potencia * 0.85f;
+  bola->velocidade_x = (direcao - 0.5f) * potencia * 1.85f;
   bola->velocidade_y = -(5.5f + potencia * 0.25f);
   bola->velocidade_z = 4.0f + altura * 8.0f;
-  bola->curva = (curva - 0.5f) * 0.09f;
+  bola->curva = (curva - 0.5f) * 0.24f;
 
   bola->potencia = potencia;
   bola->em_movimento = true;

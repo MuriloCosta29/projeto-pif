@@ -44,3 +44,13 @@ int obter_regiao_gol(Gol *gol, Bola *bola) {
 
   return gol->matriz[linha][coluna];
 }
+
+bool bola_passou_fora_do_gol(Gol *gol, Bola *bola) {
+  float bola_y_visual = bola->y - bola->z;
+  bool passou_linha_gol = bola_y_visual <= gol->y + gol->altura;
+  bool fora_lateral = bola->x < gol->x || bola->x > gol->x + gol->largura;
+  bool fora_por_cima = bola_y_visual < gol->y;
+
+  return bola->em_movimento && passou_linha_gol &&
+         (fora_lateral || fora_por_cima);
+}
