@@ -4,6 +4,7 @@
 #include "fisica.h"
 #include "gol.h"
 #include "goleiro.h"
+#include "placar.h"
 #include "torcida.h"
 #include <stddef.h>
 #include <stdlib.h>
@@ -58,6 +59,16 @@ static void aplicar_nivel(Jogo *jogo) {
   jogo->chances_restantes = jogo->total_niveis - jogo->nivel_atual;
 }
 
+static void salvar_pontuacao_final(Jogo *jogo) {
+  if (jogo->pontuacao_salva) {
+    return;
+  }
+
+  salvar_score("JOGADOR", jogo->pontuacao_atual);
+  jogo->qtd_scores = carregar_scores(jogo->scores, MAX_SCORES);
+  jogo->pontuacao_salva = true;
+}
+
 void inicializar_jogo(Jogo *jogo) {
   srand(time(NULL));
 
@@ -67,12 +78,14 @@ void inicializar_jogo(Jogo *jogo) {
   jogo->nivel_atual = 0;
   jogo->total_niveis = total_niveis;
   jogo->barreira = NULL;
+  jogo->pontuacao_salva = false;
+  jogo->qtd_scores = carregar_scores(jogo->scores, MAX_SCORES);
 
   inicializar_gol(&jogo->gol);
   aplicar_nivel(jogo);
   inicializar_torcida(&jogo->torcida);
-  jogo->resultado_chute = CHUTE_NENHUM; // Diz qual foi o resultado
-  jogo->tempo_resultado = 0; // diz por quanto tempo mostrar o resultado
+  jogo->resultado_chute = CHUTE_NENHUM;
+  jogo->tempo_resultado = 0;
 
   jogo->medidor_atual.x = 200;
   jogo->medidor_atual.y = 640;
@@ -87,6 +100,8 @@ void reiniciar_jogo(Jogo *jogo) {
   jogo->chances_restantes = total_niveis;
   jogo->nivel_atual = 0;
   jogo->total_niveis = total_niveis;
+  jogo->pontuacao_salva = false;
+  jogo->qtd_scores = carregar_scores(jogo->scores, MAX_SCORES);
 
   aplicar_nivel(jogo);
   inicializar_torcida(&jogo->torcida);
@@ -110,6 +125,7 @@ void resetar_cobranca(Jogo *jogo) {
 
   if (jogo->nivel_atual >= jogo->total_niveis) {
     jogo->estado_atual = GAME_OVER;
+    salvar_pontuacao_final(jogo);
     return;
   }
 
@@ -126,6 +142,7 @@ void avancar_nivel_debug(Jogo *jogo) {
 
   if (jogo->nivel_atual >= jogo->total_niveis) {
     jogo->estado_atual = GAME_OVER;
+    salvar_pontuacao_final(jogo);
     return;
   }
 
@@ -137,7 +154,6 @@ void avancar_nivel_debug(Jogo *jogo) {
 }
 
 void atualizar_jogo(Jogo *jogo) {
-
   if (jogo->estado_atual == RESULTADO) {
     jogo->tempo_resultado--;
 
