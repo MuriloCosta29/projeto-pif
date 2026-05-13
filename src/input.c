@@ -24,6 +24,11 @@ void processarInput(Jogo *j) {
     return;
   }
 
+  if (IsKeyPressed(KEY_N)) {
+    avancar_nivel_debug(j);
+    return;
+  }
+
   if (j->estado_atual != MIRANDO) {
     return;
   }

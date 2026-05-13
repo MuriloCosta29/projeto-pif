@@ -161,14 +161,26 @@ void desenhar_medidor(Jogo *jogo) {
 }
 
 void desenhar_hud(Jogo *jogo) {
-  Rectangle painel = {20, 520, 165, 92};
+  const char *tipo = "PENALTI";
+
+  if (jogo->tipo_cobranca_atual == COBRANCA_FALTA_ESQUERDA) {
+    tipo = "FALTA ESQ";
+  } else if (jogo->tipo_cobranca_atual == COBRANCA_FALTA_FRONTAL) {
+    tipo = "FALTA MEIO";
+  } else if (jogo->tipo_cobranca_atual == COBRANCA_FALTA_DIREITA) {
+    tipo = "FALTA DIR";
+  }
+
+  Rectangle painel = {20, 500, 175, 112};
   DrawRectangleRounded(painel, 0.12f, 8, Fade((Color){20, 35, 28, 255}, 0.78f));
   DrawRectangleRoundedLines(painel, 0.12f, 8, (Color){235, 235, 220, 210});
 
-  DrawText(TextFormat("GOLS  %d", jogo->pontuacao_atual), 36, 536, 22,
+  DrawText(TextFormat("FASE  %d/%d", jogo->nivel_atual + 1,
+                      jogo->total_niveis),
+           36, 514, 19, WHITE);
+  DrawText(tipo, 36, 539, 18, (Color){215, 225, 215, 255});
+  DrawText(TextFormat("GOLS  %d", jogo->pontuacao_atual), 36, 564, 22,
            (Color){255, 235, 120, 255});
-  DrawText(TextFormat("CHANCES  %d", jogo->chances_restantes), 36, 566, 20,
-           WHITE);
   DrawText("SPACE: travar", 36, 592, 16, (Color){215, 225, 215, 255});
 }
 
