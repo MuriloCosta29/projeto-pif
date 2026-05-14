@@ -140,24 +140,175 @@ void desenhar_medidor(Jogo *jogo) {
 
   Medidor *m = &jogo->medidor_atual;
 
-  int titulo_w = MeasureText(titulo, 24);
-  DrawText(titulo, m->x + m->largura / 2 - titulo_w / 2, m->y - 32, 24, BLACK);
+  float painel_x = m->x + 80;
+  float painel_largura = m->largura - 160;
+  float painel_altura = 58;
+  float painel_y = 700 - painel_altura - 4;
+  Rectangle painel = {painel_x, painel_y, painel_largura, painel_altura};
+  Rectangle trilha = {painel_x + 110, painel_y + 22, painel_largura - 170, 14};
+  Color azul_fundo = (Color){20, 43, 74, 235};
+  Color azul_claro = (Color){52, 104, 156, 255};
+  Color dourado = (Color){242, 196, 70, 255};
+  Color vermelho = (Color){210, 36, 38, 255};
+  Color texto = (Color){245, 248, 235, 255};
 
-  DrawRectangle(m->x, m->y, m->largura, m->altura, LIGHTGRAY);
-  DrawRectangleLines(m->x, m->y, m->largura, m->altura, BLACK);
+  DrawRectangleRec(painel, azul_fundo);
+  DrawRectangleLinesEx(painel, 2, dourado);
 
-  int rot_size = 18;
+  const char *etapas[] = {"DIR", "ALT", "CUR", "POT"};
+  int abas = 4;
+  float aba_largura = 22;
+  float abas_y = painel_y + 6;
+  float abas_x = painel_x + 8;
+  for (int i = 0; i < abas; i++) {
+    Rectangle aba = {abas_x + i * (aba_largura + 2), abas_y, aba_largura, 16};
+    bool ativa = jogo->etapa_chute == i;
+    DrawRectangleRec(aba, ativa ? dourado : (Color){25, 55, 95, 255});
+    DrawRectangleLinesEx(aba, 1, ativa ? WHITE : azul_claro);
+
+    int text_w = MeasureText(etapas[i], 10);
+    DrawText(etapas[i], aba.x + aba.width / 2 - text_w / 2, aba.y + 3, 10,
+             ativa ? (Color){30, 25, 12, 255} : texto);
+  }
+
+  int titulo_w = MeasureText(titulo, 14);
+  DrawText(titulo, painel_x + 8, abas_y + 22, 14, dourado);
+
+  DrawRectangleRec(trilha, (Color){8, 14, 24, 255});
+  DrawRectangleLinesEx(trilha, 1, (Color){210, 225, 235, 255});
+
+  for (int i = 1; i < 10; i++) {
+    float tick_x = trilha.x + (trilha.width * i) / 10.0f;
+    int tick_h = i == 5 ? 16 : 8;
+    DrawLineEx((Vector2){tick_x, trilha.y + trilha.height / 2 - tick_h / 2},
+               (Vector2){tick_x, trilha.y + trilha.height / 2 + tick_h / 2},
+               i == 5 ? 2 : 1, Fade(WHITE, i == 5 ? 0.85f : 0.45f));
+  }
+
+  DrawRectangle(trilha.x + 2, trilha.y + 2, trilha.width - 4, trilha.height - 4,
+                (Color){236, 238, 222, 255});
+  DrawRectangle(trilha.x + trilha.width * 0.42f, trilha.y + 2,
+                trilha.width * 0.16f, trilha.height - 4,
+                (Color){96, 184, 82, 255});
+
+  int rot_size = 10;
   int meio_w = MeasureText(rot_meio, rot_size);
   int dir_w = MeasureText(rot_dir, rot_size);
-  int rot_y = m->y + m->altura + 6;
+  int rot_y = trilha.y + trilha.height + 3;
+  DrawText(rot_esq, trilha.x, rot_y, rot_size, texto);
+  DrawText(rot_meio, trilha.x + trilha.width / 2 - meio_w / 2, rot_y, rot_size,
+           texto);
+  DrawText(rot_dir, trilha.x + trilha.width - dir_w, rot_y, rot_size, texto);
 
-  DrawText(rot_esq, m->x, rot_y, rot_size, DARKGRAY);
-  DrawText(rot_meio, m->x + m->largura / 2 - meio_w / 2, rot_y, rot_size,
-           DARKGRAY);
-  DrawText(rot_dir, m->x + m->largura - dir_w, rot_y, rot_size, DARKGRAY);
+  float marcadorX = trilha.x + m->valor_atual * trilha.width;
+  float tempo = GetTime();
+  float pulso = 0.55f + 0.45f * sinf(tempo * 7.0f);
+  Vector2 p1 = {marcadorX, trilha.y - 2};
+  Vector2 p2 = {marcadorX - 6, trilha.y - 11 - pulso * 2.0f};
+  Vector2 p3 = {marcadorX + 6, trilha.y - 11 - pulso * 2.0f};
+  DrawTriangle(p1, p2, p3, vermelho);
+  DrawTriangleLines(p1, p2, p3, WHITE);
+  DrawRectangle(marcadorX - 1, trilha.y, 3, trilha.height, vermelho);
 
-  float marcadorX = m->x + m->valor_atual * m->largura;
-  DrawCircle(marcadorX, m->y + m->altura / 2, 10, RED);
+  Vector2 icone_centro = {painel_x + painel_largura - 25, painel_y + 30};
+  Color icone_cor = Fade(dourado, 0.60f + pulso * 0.40f);
+
+  if (jogo->etapa_chute == 0) {
+    float direcao = m->valor_atual - 0.5f;
+
+    if (fabsf(direcao) < 0.10f) {
+      DrawLineEx((Vector2){icone_centro.x, icone_centro.y + 12},
+                 (Vector2){icone_centro.x, icone_centro.y - 12}, 3, icone_cor);
+      DrawTriangle((Vector2){icone_centro.x, icone_centro.y - 17},
+                   (Vector2){icone_centro.x - 5, icone_centro.y - 8},
+                   (Vector2){icone_centro.x + 5, icone_centro.y - 8}, icone_cor);
+    } else if (direcao < 0.0f) {
+      Vector2 inicio = {icone_centro.x + 15, icone_centro.y};
+      Vector2 fim = {icone_centro.x - 15, icone_centro.y};
+
+      DrawLineEx(inicio, fim, 3, icone_cor);
+      DrawTriangle((Vector2){fim.x - 6, fim.y},
+                   (Vector2){fim.x + 5, fim.y + 6},
+                   (Vector2){fim.x + 5, fim.y - 6}, icone_cor);
+    } else {
+      Vector2 inicio = {icone_centro.x - 15, icone_centro.y};
+      Vector2 fim = {icone_centro.x + 15, icone_centro.y};
+
+      DrawLineEx(inicio, fim, 3, icone_cor);
+      DrawTriangle((Vector2){fim.x + 6, fim.y},
+                   (Vector2){fim.x - 4, fim.y - 5},
+                   (Vector2){fim.x - 4, fim.y + 5}, icone_cor);
+    }
+  } else if (jogo->etapa_chute == 1) {
+    float altura_seta = 8.0f + m->valor_atual * 16.0f;
+    Vector2 base = {icone_centro.x, icone_centro.y + 12};
+    Vector2 ponta = {icone_centro.x, base.y - altura_seta};
+
+    DrawLineEx(base, ponta, 3, icone_cor);
+    DrawTriangle((Vector2){ponta.x, ponta.y - 5},
+                 (Vector2){ponta.x - 5, ponta.y + 3},
+                 (Vector2){ponta.x + 5, ponta.y + 3}, icone_cor);
+    DrawLineEx((Vector2){icone_centro.x - 12, base.y},
+               (Vector2){icone_centro.x + 12, base.y}, 2, Fade(WHITE, 0.65f));
+  } else if (jogo->etapa_chute == 2) {
+    float curva = m->valor_atual - 0.5f;
+    float intensidade = fabsf(curva) * 2.0f;
+
+    if (intensidade < 0.18f) {
+      Vector2 inicio = {icone_centro.x, icone_centro.y + 12};
+      Vector2 fim = {icone_centro.x, icone_centro.y - 12};
+
+      DrawLineEx(inicio, fim, 3, icone_cor);
+      DrawTriangle((Vector2){fim.x, fim.y - 5}, (Vector2){fim.x - 5, fim.y + 3},
+                   (Vector2){fim.x + 5, fim.y + 3}, icone_cor);
+      DrawLineEx((Vector2){icone_centro.x - 10, icone_centro.y},
+                 (Vector2){icone_centro.x + 10, icone_centro.y}, 2,
+                 Fade(WHITE, 0.55f));
+    } else {
+      float direcao = curva < 0.0f ? 1.0f : -1.0f;
+      float abertura = 10.0f + intensidade * 7.0f;
+      Vector2 inicio = {icone_centro.x, icone_centro.y + 13.0f};
+      Vector2 controle = {icone_centro.x + direcao * abertura,
+                          icone_centro.y + 3.0f};
+      Vector2 fim = {icone_centro.x + direcao * abertura,
+                     icone_centro.y - 12.0f};
+      Vector2 anterior = inicio;
+
+      for (int i = 1; i <= 14; i++) {
+        float t = (float)i / 14.0f;
+        float inv = 1.0f - t;
+        Vector2 ponto = {
+            inv * inv * inicio.x + 2.0f * inv * t * controle.x + t * t * fim.x,
+            inv * inv * inicio.y + 2.0f * inv * t * controle.y + t * t * fim.y};
+
+        DrawLineEx(anterior, ponto, 2, icone_cor);
+        anterior = ponto;
+      }
+
+      if (direcao < 0.0f) {
+        DrawTriangle((Vector2){fim.x - 6.0f, fim.y},
+                     (Vector2){fim.x + 4.0f, fim.y + 6.0f},
+                     (Vector2){fim.x + 4.0f, fim.y - 6.0f}, icone_cor);
+      } else {
+        DrawTriangle((Vector2){fim.x + 6.0f, fim.y},
+                     (Vector2){fim.x - 4.0f, fim.y - 6.0f},
+                     (Vector2){fim.x - 4.0f, fim.y + 6.0f}, icone_cor);
+      }
+      DrawCircle(inicio.x, inicio.y, 2, Fade(WHITE, 0.75f));
+    }
+  } else if (jogo->etapa_chute == 3) {
+    float preenchido = m->valor_atual * 5.0f;
+    for (int i = 0; i < 5; i++) {
+      Color barra_cor = i < preenchido ? icone_cor : Fade(WHITE, 0.25f);
+      float altura_barra = 5.0f + i * 3.0f;
+      DrawRectangle(icone_centro.x - 16 + i * 7,
+                    icone_centro.y + 12 - altura_barra, 5, altura_barra,
+                    barra_cor);
+      DrawRectangleLines(icone_centro.x - 16 + i * 7,
+                         icone_centro.y + 12 - altura_barra, 5, altura_barra,
+                         Fade(BLACK, 0.45f));
+    }
+  }
 }
 
 void desenhar_hud(Jogo *jogo) {
@@ -175,8 +326,7 @@ void desenhar_hud(Jogo *jogo) {
   DrawRectangleRounded(painel, 0.12f, 8, Fade((Color){20, 35, 28, 255}, 0.78f));
   DrawRectangleRoundedLines(painel, 0.12f, 8, (Color){235, 235, 220, 210});
 
-  DrawText(TextFormat("FASE  %d/%d", jogo->nivel_atual + 1,
-                      jogo->total_niveis),
+  DrawText(TextFormat("FASE  %d/%d", jogo->nivel_atual + 1, jogo->total_niveis),
            36, 514, 19, WHITE);
   DrawText(tipo, 36, 539, 18, (Color){215, 225, 215, 255});
   DrawText(TextFormat("GOLS  %d", jogo->pontuacao_atual), 36, 564, 22,
@@ -265,8 +415,8 @@ void desenhar_torcida(Torcida *torcida, Texture2D arquibancada) {
 
   if (torcida->estado == TORCIDA_COMEMORANDO) {
     Color cores[] = {
-        (Color){245, 210, 38, 255}, (Color){40, 165, 85, 255},
-        (Color){220, 50, 55, 255},  (Color){45, 105, 200, 255},
+        (Color){245, 210, 38, 255},  (Color){40, 165, 85, 255},
+        (Color){220, 50, 55, 255},   (Color){45, 105, 200, 255},
         (Color){245, 245, 245, 255},
     };
 
@@ -388,8 +538,7 @@ void desenhar_game_over(Jogo *jogo) {
 
   const char *ranking = "TOP 5";
   int ranking_w = MeasureText(ranking, 24);
-  DrawText(ranking, 500 - ranking_w / 2, 455, 24,
-           (Color){255, 215, 100, 255});
+  DrawText(ranking, 500 - ranking_w / 2, 455, 24, (Color){255, 215, 100, 255});
 
   for (int i = 0; i < jogo->qtd_scores; i++) {
     const char *linha = TextFormat("%d. %s  %d", i + 1, jogo->scores[i].nome,
