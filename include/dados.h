@@ -123,7 +123,6 @@ typedef struct {
   int tempo_resultado;
   int nivel_atual;
   int total_niveis;
-  int quantidade_barreira_atual;
   TipoCobranca tipo_cobranca_atual;
   int qtd_scores;
   bool pontuacao_salva;

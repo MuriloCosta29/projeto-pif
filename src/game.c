@@ -164,7 +164,7 @@ void atualizar_jogo(Jogo *jogo) {
     return;
   }
 
-  atualizar_barreira(jogo->barreira, &jogo->bola, &jogo->audio);
+  atualizar_barreira(jogo->barreira, &jogo->bola);
   atualizar_goleiro(&jogo->goleiro);
   atualizar_torcida(&jogo->torcida);
 
@@ -173,7 +173,6 @@ void atualizar_jogo(Jogo *jogo) {
   }
 
   if (bola_colidiu_barreira(&jogo->bola, jogo->barreira)) {
-    tocar_colisao(&jogo->audio);
     jogo->bola.visivel = false;
     jogo->bola.em_movimento = false;
     torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
@@ -195,7 +194,6 @@ void atualizar_jogo(Jogo *jogo) {
       jogo->estado_atual = RESULTADO;
       jogo->tempo_resultado = 90;
     } else {
-      tocar_gol(&jogo->audio);
       jogo->bola.visivel = false;
       jogo->bola.em_movimento = false;
       jogo->pontuacao_atual++;
@@ -209,18 +207,19 @@ void atualizar_jogo(Jogo *jogo) {
   }
 
   if (bola_passou_fora_do_gol(&jogo->gol, &jogo->bola)) {
-  tocar_fora(&jogo->audio);
-  torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
-  jogo->resultado_chute = CHUTE_FORA;
-  jogo->estado_atual = RESULTADO;
-  jogo->tempo_resultado = 90;
-  return;
-}
+    tocar_fora(&jogo->audio);
+    torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
+    jogo->resultado_chute = CHUTE_FORA;
+    jogo->estado_atual = RESULTADO;
+    jogo->tempo_resultado = 90;
+    return;
+  }
 
   if (jogo->bola.y > 760 || jogo->bola.x < -80 || jogo->bola.x > 1080) {
-  tocar_fora(&jogo->audio);
-  torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
-  jogo->resultado_chute = CHUTE_FORA;
-  jogo->estado_atual = RESULTADO;
-  jogo->tempo_resultado = 90;
+    tocar_fora(&jogo->audio);
+    torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
+    jogo->resultado_chute = CHUTE_FORA;
+    jogo->estado_atual = RESULTADO;
+    jogo->tempo_resultado = 90;
+  }
 }
