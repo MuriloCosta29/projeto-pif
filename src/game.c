@@ -209,17 +209,18 @@ void atualizar_jogo(Jogo *jogo) {
   }
 
   if (bola_passou_fora_do_gol(&jogo->gol, &jogo->bola)) {
-    torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
-    jogo->resultado_chute = CHUTE_FORA;
-    jogo->estado_atual = RESULTADO;
-    jogo->tempo_resultado = 90;
-    return;
-  }
+  tocar_fora(&jogo->audio);
+  torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
+  jogo->resultado_chute = CHUTE_FORA;
+  jogo->estado_atual = RESULTADO;
+  jogo->tempo_resultado = 90;
+  return;
+}
 
   if (jogo->bola.y > 760 || jogo->bola.x < -80 || jogo->bola.x > 1080) {
-    torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
-    jogo->resultado_chute = CHUTE_FORA;
-    jogo->estado_atual = RESULTADO;
-    jogo->tempo_resultado = 90;
-  }
+  tocar_fora(&jogo->audio);
+  torcida_reage(&jogo->torcida, TORCIDA_DESANIMADA);
+  jogo->resultado_chute = CHUTE_FORA;
+  jogo->estado_atual = RESULTADO;
+  jogo->tempo_resultado = 90;
 }
