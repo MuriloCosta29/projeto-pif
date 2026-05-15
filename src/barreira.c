@@ -58,7 +58,7 @@ void resetar_barreira(Defensor *barreira) {
   }
 }
 
-void atualizar_barreira(Defensor *barreira, Bola *bola, AudioJogo *audio) {
+void atualizar_barreira(Defensor *barreira, Bola *bola) {
   Defensor *atual = barreira;
 
   while (atual != NULL) {
@@ -70,7 +70,6 @@ void atualizar_barreira(Defensor *barreira, Bola *bola, AudioJogo *audio) {
       if (rand() % 100 < 30) {
         atual->esta_pulando = true;
         atual->tempo_pulo = 30;
-        tocar_pulo(audio);
       }
     }
 
