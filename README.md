@@ -102,4 +102,4 @@ README.md      **Documentação**
 ## Limpeza
 
 Para remover o executável:
-`make clean"
+`make clean`
